@@ -2,7 +2,7 @@ Hello everybody!
 
 Today Andrea gave us her delightful skeleton of how our  story creation mode will work.
 
-	Story files are pickle files that hold the information about a previously generated games. When executing Adventure Squirrel, one can pass a Story File as a parameter to play that particular game.
+Story files are pickle files that hold the information about a previously generated games. When executing Adventure Squirrel, one can pass a Story File as a parameter to play that particular game.
 
 What are our objectives with the story Creator:
 
@@ -15,20 +15,20 @@ The Writer MUST be able to save his story - Automatic outputting on pickle files
 What do we need to do for this week:
 	
 Room creation capabilities all work - Andrea
-must always create room name and description before we can create another room
+			must always create room name and description before we can create another room
 Item creation capabilities - Bruno
 Base actions all items should have (ex. listen, hear, examine,look at, etc.) -
 Room connection capabilities - Andrea
 Item placement in rooms
 
 create the actual engine: player class, inventory, run the game, etc.
-mode 1: read the pickle file
-mode 2: read info from the user
+			mode 1: read the pickle file
+			mode 2: read info from the user
 
 Summary:
-	Bruno - Items
-	Andrea - Rooms
-	Wenjie - Initial skeleton for actual playtime - Create Player, inventory and game classes...
+			Bruno - Items
+			Andrea - Rooms
+			Wenjie - Initial skeleton for actual playtime - Create Player, inventory and game classes...
 
 Next meeting:
 November 3, 9am, SIPA Library. 
