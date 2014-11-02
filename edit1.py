@@ -9,6 +9,7 @@ class Room(object):
         self.name = name
         self.number = number
         self.description = description
+        self.complete = False
     
     def __str__(self):
         return self.name
@@ -33,6 +34,14 @@ class Room(object):
     
     def add_verbs(action):
         self.verbs.append(action)
+    
+    def change_name_and_description(self,new_name, new_d):
+        self.name = new_name
+        self.description = new_d
+    
+    def change_connections(self, d_list):
+        self.connections = d_list
+        self.complete= True
     
 
 class GameMap(object):
@@ -102,66 +111,163 @@ def make_game():
     player_name = input("What is your player's name? If none, type 'no name'")
     player = Player(player_name)
     
-    #need to handle errors...
-    number_of_rooms = int(input("How many sections/rooms/areas do you have?"))
-    all_rooms = make_rooms(number_of_rooms) #we create the rooms
-    all_rooms = add_room_connections(all_rooms) #we add connections to the rooms
+    #now we will create rooms
+    create_rooms()
     
-    map_of_game = GameMap(game, all_rooms)
-    map_of_game.add_connections()
+def create_rooms():
+    #create the first room
+    print("""Let's create our rooms! You will be able to generate a room and
+          its connections. You can also create a room when you are defining
+          room connections. However, you will only be able to create that room's
+          name and description, and not define its connections. This way you
+          cannot get lost while creating rooms.
+          """)
     
+    rooms = create()
+    
+    rooms = find_missing_rooms(rooms)
+    rooms = final_check(rooms)
+    
+    print("You created all the rooms!")
+
+def create():
+    rooms = []
+    name, description = room_name_and_description()
+    rooms.append(Room(name, description,0))
+    
+    rooms = create_connections(rooms,0)
+    
+    #edit rooms
+    cont = True
+    while cont==True:
+        create_room = input("""Do you want to create a room?
+                            Type y for yes and n for no""")
+        if handle_human_input(create_room) is True:
+            #create a room and its connections
+            name, description = room_name_and_description()
+            rooms.append(Room(name,description,len(rooms)))
+            rooms = create_connections(rooms, len(rooms)-1)
+        edit_room = input("""Do you want to edit a room?
+                          Type  y for yes and n for no""")
+        if handle_human_input(edit_room) is True:
+            #edit a room name and its connections...
+            print_list_of_all_rooms(rooms)
+            room_name = input("Which room do you want to edit?")
+            index = find_connection(rooms,room_name)
+            room = rooms[index]
+            name, description = room_name_and_description()
+            room.change_name_and_description(name,description)
+            list_of_ds = change_connections(room, rooms)
+            room.change_connections(list_of_ds)
+            rooms[index] = room
+        
+        go_on = input("""Do you want to continue with the rooms?
+                      Type y for yes and n for no""")
+        if handle_human_input(go_on) is False:
+            cont = False
+    
+    return rooms
     
 
-def make_rooms(number_of_rooms):
-    rooms = []
-    for i in range(number_of_rooms):
-        fix = True
-        while fix==True:
-            room_name = input("What is an area's name?")
-            room_description = input("""Please write the text you want
-                                         your player to see when
-                                         he/she enters""")
-            print(room_name, room_description)
-            correction = input("Is this correct?")
-            if handle_human_input(correction) is True:
-                fix = False
-            rooms.append(Room(room_name, room_description,i))
+def room_name_and_description():
+    fix = True
+    while fix ==True:
+        room_name = input("What is this area's name?")
+        room_description = input("""Please write the text you
+                                 want your player to see when he or
+                                 she enters this area""")
+        print(room_name, room_description)
+        correction = input("""Is this correct? Please type y for yes
+                           and n for no""")
+        if handle_human_input(correction) is True:
+            fix = False
+    return room_name, room_description
+
+#we do length of the list to make sure room number isn't repeated
+
+def create_connections(rooms,number):
+    directions = ["north", "south", "east", "west",
+                  "northeast", "northwest", "southeast",
+                  "southwest", "up", "down", "in", "out"]
+    
+    room = rooms[number]
+    
+    for d in directions:
+        print("Is there a room connected to", room, "by the direction",
+              d, "?")
+        
+        cont = input("Type y for yes and n for no")
+        if handle_human_input(cont) is False:
+            room.connections.append(-1)
+        else:
+            new = input("Do we need a new room? Type y for yes, n for no")
+            if handle_human_input(new) is True:
+                name, description = room_name_and_description()
+                n = len(rooms)
+                rooms.append(Room(name, description,n))
+                room.connections.append(n)
+            else:
+                #print all of the room names, find the room, and add that spot
+                print_list_of_all_rooms(rooms)
+                room_connected = input("Which room is connected to this room?")
+                room.connections.append(find_connection(rooms,room_connected))
+    
+    room.complete = True
+    rooms[number] = room
+    
     return rooms
 
-#obviously need to handle for 'y' or 'yes' etc
+def change_connections(room, rooms):
+    directions = ["north", "south", "east", "west",
+                  "northeast", "northwest", "southeast",
+                  "southwest", "up", "down", "in", "out"]
+    
+    room_connections = []
+    
+    for i in range(len(directions)):
+        print("Is there a room connected to", room, "by the direction",
+              directions[i], "?")
+        
+        cont = input("Type y for yes and n for no")
+        if handle_human_input(cont) is False:
+            room_connections.append(-1)
+        else:
+            room_connected = input("Which room is connected to this room?")
+            room_connections.append(find_connection(rooms,room_connected))
+    return room_connections
+    
+    
 def handle_human_input(human_input):
     if human_input=='y':
         return True
     else:
         return False
 
-def add_room_connections(list_of_rooms):
-    directions = ["north", "south", "east", "west",
-                  "northeast", "northwest", "southeast",
-                  "southwest", "up", "down", "in", "out"]
-    for room in list_of_rooms:
-        for d in directions: #go through all directions
-            print("Is there a room connected to", room, "'s", d)
-            connection = input("Please type y for yes or n for no")
-            if handle_human_input(connection)==False:
-                room.connections.append(-1) #-1 means no connection
-            else:
-                print_list_of_all_rooms(list_of_rooms)
-                room_connected = input("Which room is connected to this room?")
-                room.connections.append(find_connection(list_of_rooms,room_connected))
-    return list_of_rooms
-
 def print_list_of_all_rooms(list_of_rooms):
     for r in list_of_rooms:
         print(r.name)
 
-#need to account for room not included..
+#need to account for room not included.
 def find_connection(list_of_rooms, name):
     for r in list_of_rooms:
         if r.name==name:
             return r.number
-
-#add description of what happens after items...
-
     
+def find_missing_rooms(rooms):
+    for r in rooms:
+        if r.complete is False:
+            rooms = create_connections(rooms,r.number)
+    return rooms
+
+def final_check(rooms):
+    for r in rooms:
+        print(r.name, r.description, r.connections)
+        go = input("Does this look correct? Type y for yes and n for no")
+        if handle_human_input(go) is False:
+            n, d = room_name_and_description()
+            r.change_name_and_description(n,d)
+            list_of_ds = change_connections(r, rooms)
+            r.change_connections(list_of_ds)
+    return rooms
+
 make_game()
