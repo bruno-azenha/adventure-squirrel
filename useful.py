@@ -1,7 +1,7 @@
 import readchar
 import os
 
-#This is a method that creates a menu for easier selection of options
+#This is a function that creates a menu for easier selection of options
 #and returns the highlighted item. 
 def showMenu( message, optionList ):
     
@@ -42,7 +42,7 @@ def showMenu( message, optionList ):
         if key == ENTER:
             os.system('clear')
             print('Selected: ' + str(optionList[cursor]))
-            return optionList[cursor], cursor 
+            return cursor, optionList[cursor] 
  
         os.system('clear')
 
@@ -55,3 +55,22 @@ def test_showMenu():
 
     print('Option: ' + direction)
     print('Index: ' + str(cursor))
+
+# Function to provide nice header messages all around
+def formatHeader(header_msg):
+    length = len(header_msg)
+    header = "/--"
+    
+    for i in range(length):
+        header += "-"
+
+    header += "--\\\n"
+    header += "|  " + header_msg + "  |\n"
+    header += "\\--"
+    
+    for i in range(length):
+        header += "-"
+
+    header += "--/\n"
+    return header  
+    

@@ -1,3 +1,124 @@
+import useful
+
+
+def make_game():
+
+    # Prompts the writer for his name
+    print("Hello, what is your name?")
+    writer_name = input()
+
+    # Asks what he wants to do
+    msg = "Hi " + writer_name + ", what would you like to do?"
+    opt = ["CREATE a new game", "EDIT a saved game", 
+           "PREVIEW a saved game", "EXIT this program"]
+    answer = useful.showMenu(msg, opt)
+
+    # Writer chose to CREATE a new game
+    if answer[0] == 0:
+        createNewGame(writer_name)
+        create_item()
+    # Writer chose to EDIT a saved game
+    elif answer[0] == 1:
+        editSavedGame()
+
+    # Writer chose to PREVIEW a saved game
+    elif answer[0] == 2:
+        previewSavedGame()
+    
+    # Writer chose to EXIT this program
+    elif answer[0] == 3:
+        print(writer_name + ", it was great to have you around.")
+   
+    # Something strange happened
+    else:
+        print("What kind of sorcery is this?")
+        print(answer)
+
+# Drives the user through the pipeline of game making
+def createNewGame(writer_name):
+    
+    # Here we create a mock game object - although Bruno believes it would be 
+    # better to make that the last thing to do.
+    game = Game()
+
+    # Here we will have our user create his/her game
+    print(
+"""Hey there {0}! We are going to ask you a few questions to help
+you creating your own text-based adventure game. Please be sure to
+have your room connections, items, and actions already in mind."""
+.format(writer_name)
+    )
+     
+    # Prompts the user for the name of the game
+    print("First off, what is your game's name?")
+    game_name = input()
+    game.name = game_name
+    
+    # Or should we have you two make this?
+    print("What is your player's name?")
+    player_name = input()
+    player = Player(player_name)
+    game.player = player    
+
+    # Add stuff to the game:
+    game = writeGame(game)
+
+    # create_item()
+    
+    #now we will create rooms
+    #create_rooms()
+
+# Loads a story file and puts the user back on the pipeline of game making
+# THIS IS NOT YET IMPLEMENTED
+def editSavedGame():    
+    print("THIS IS NOT YET IMPLEMENTED")
+
+# The idea is that a user can play his unfinished game through here and
+# still retain his editing skills.
+# THIS IS NOT YET IMPLEMENTED - PROBABLY WILL NEVER BE
+def previewSavedGame():
+    print("THIS IS NOT YET IMPLEMENTED")
+
+    
+#This function keeps prompting the user for additions for his game
+def writeGame(game):
+   
+    msg = useful.formatHeader("What do you want to do?")
+    opt = ["CREATE a ROOM", "EDIT a ROOM", "REMOVE a ROOM",
+           "CREATE an ITEM", "EDIT an ITEM", "REMOVE an ITEM",
+           "SAVE STORY FILE", "EXIT WITHOUT SAVING"]
+    
+    answer = useful.showMenu(msg, opt)
+    
+    # User selected CREATE a ROOM
+    if answer[1] == opt[1]:
+        
+
+    # User selected EDIT a ROOM
+    if answer[1] == opt[1]:
+    
+    # User selected REMOVE a ROOM
+    if answer[1] == opt[1]:
+    
+    # User selected CREATE an
+    if answer[1] == opt[1]:
+    
+    # User selected CREATE an ROOM
+    if answer[1] == opt[1]:
+    
+    # User selected CREATE an ROOM
+    if answer[1] == opt[1]:
+    
+    # User selected CREATE a
+    if answer[1] == opt[1]:
+    
+     
+    print("Ok so far.")
+
+    #returns the modified game
+    return game
+    
+
 class Room(object):
     """Here, we are creating one room with items, verbs, and room
     connections maybe..."""
@@ -68,8 +189,8 @@ class GameMap(object):
 
 class Game(object):
     
-    def __init__(self,name):
-        self.name = name
+    def __init__(self):
+        self.name = ""
         self.player = None
         self.moves = 0
         self.score = 0
@@ -88,31 +209,14 @@ class Player(object):
         self.inventory = []
     
 
+# Items are objects that the player can interact with,  
+# to the most varied outcomes.
 class Item(object):
     
-    def __init__(self,name,description):
+    def __init__(self, name, description):
         self.name = name
-        self.description = description
+        self.description = description 
 
-def make_game():
-    """Here we will have our user define his/her game"""
-    
-    print("""Hey there! We are going to ask you a few questions to
-          to create your text-based adventure game. Please be sure to
-          have your room connections, items, and actions already
-          in mind.""")
-    
-    game_name = input("First off, what is your game's name?")
-    #here we will create the game...just created a mock game object,
-    #we can change it all later
-    game = Game(game_name)
-    
-    #or should we have you two make this?
-    player_name = input("What is your player's name? If none, type 'no name'")
-    player = Player(player_name)
-    
-    #now we will create rooms
-    create_rooms()
     
 def create_rooms():
     #create the first room
@@ -270,4 +374,55 @@ def final_check(rooms):
             r.change_connections(list_of_ds)
     return rooms
 
+def create_item():
+    
+    #Name of the item: (Step 1)
+    print("What is the name of the item you are creating?")
+    item_name = input()
+
+    #Description of the item: (Step 2)
+    print("What is the description of the item you are creating?")
+    item_description = input()
+
+    #Placeble in inventory: (Step 3)
+    msg = useful.formatHeader("Is this item placeble on the player's inventory?")
+    
+    if (useful.showMenu(msg, ['yes', 'no'])[0] == 0):
+        item_inv = True
+        
+        #Droppable after picked up: 
+        msg = useful.formatHeader("Can the player drop this item after picking it up?") 
+        if (useful.showMenu(msg, ['yes', 'no'])[0] == 0):
+            item_drop = True
+        else:
+            item_drop = False
+        
+    else: 
+        item_inv =  False
+        item_drop = False
+
+    #Usable item: (Step 4)
+    use_effects = ["NOTHING - But display a message anyway", 
+                   "The player dies",
+                   "The player gets transported to another room",
+                   "Light up the room"]
+
+    msg = useful.formatHeader("Can the player USE this object")
+    if (useful.showMenu(msg, ['yes', 'no'])[0] == 0):
+        item_use = True
+        answer = useful.showMenu(msg, use_effects)
+    else :
+        item_use = False
+        answer = (-1, 'NO')
+     
+    #Now I have all the information i need to create the item
+    print('Name: ' + str(item_name))
+    print('Description: ' + str(item_description))
+    print('item_inv: ' + str(item_inv))
+    print('item_drop: ' + str(item_drop))
+    print('item_use: ' + str(item_use))
+    print('index: ' + str(answer[0]) + ' -- Option: ' + answer[1])
+    
+
+#In here we are calling the method used to start the game making process.
 make_game()
