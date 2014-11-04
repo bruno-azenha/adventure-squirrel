@@ -1,38 +1,41 @@
 import useful
 
-
 def make_game():
 
     # Prompts the writer for his name
     print("Hello, what is your name?")
     writer_name = input()
 
-    # Asks what he wants to do
-    msg = "Hi " + writer_name + ", what would you like to do?"
-    opt = ["CREATE a new game", "EDIT a saved game", 
-           "PREVIEW a saved game", "EXIT this program"]
-    answer = useful.showMenu(msg, opt)
+    #Loop in the main menu while user does not chose to exit
+    while True:
+        # Asks what he wants to do
+        msg = "Hi " + writer_name + ", what would you like to do?"
+        opt = ["CREATE a new game", "EDIT a saved game", 
+               "PREVIEW a saved game", "EXIT this program"]
+        answer = useful.showMenu(msg, opt)
 
-    # Writer chose to CREATE a new game
-    if answer[0] == 0:
-        createNewGame(writer_name)
-        create_item()
-    # Writer chose to EDIT a saved game
-    elif answer[0] == 1:
-        editSavedGame()
+        # Writer chose to CREATE a new game
+        if answer[0] == 0:
+            createNewGame(writer_name)
+            create_item()
+        # Writer chose to EDIT a saved game
+        elif answer[0] == 1:
+            editSavedGame()
 
-    # Writer chose to PREVIEW a saved game
-    elif answer[0] == 2:
-        previewSavedGame()
-    
-    # Writer chose to EXIT this program
-    elif answer[0] == 3:
-        print(writer_name + ", it was great to have you around.")
-   
-    # Something strange happened
-    else:
-        print("What kind of sorcery is this?")
-        print(answer)
+        # Writer chose to PREVIEW a saved game
+        elif answer[0] == 2:
+            previewSavedGame()
+        
+        # Writer chose to EXIT this program
+        elif answer[0] == 3:
+            print(writer_name + ", it was great to have you around.")
+            break;
+       
+        # Something strange happened
+        else:
+            print("What kind of sorcery is this?")
+            print(answer)
+            break;
 
 # Drives the user through the pipeline of game making
 def createNewGame(writer_name):
@@ -71,13 +74,13 @@ have your room connections, items, and actions already in mind."""
 # Loads a story file and puts the user back on the pipeline of game making
 # THIS IS NOT YET IMPLEMENTED
 def editSavedGame():    
-    print("THIS IS NOT YET IMPLEMENTED")
+    print("EDIT SAVED GAME IS NOT YET IMPLEMENTED")
 
 # The idea is that a user can play his unfinished game through here and
 # still retain his editing skills.
 # THIS IS NOT YET IMPLEMENTED - PROBABLY WILL NEVER BE
 def previewSavedGame():
-    print("THIS IS NOT YET IMPLEMENTED")
+    print("PREVIEW SAVED GAME IS NOT YET IMPLEMENTED")
 
     
 #This function keeps prompting the user for additions for his game
@@ -86,32 +89,45 @@ def writeGame(game):
     msg = useful.formatHeader("What do you want to do?")
     opt = ["CREATE a ROOM", "EDIT a ROOM", "REMOVE a ROOM",
            "CREATE an ITEM", "EDIT an ITEM", "REMOVE an ITEM",
-           "SAVE STORY FILE", "EXIT WITHOUT SAVING"]
+           "SAVE STORY FILE", "SAVE AND EXIT", "EXIT WITHOUT SAVING"]
     
     answer = useful.showMenu(msg, opt)
     
     # User selected CREATE a ROOM
-    if answer[1] == opt[1]:
-        
+    if answer[1] == opt[0]:
+        game.createRoom()        
 
     # User selected EDIT a ROOM
-    if answer[1] == opt[1]:
-    
+    elif answer[1] == opt[1]:
+        game.editRoom()
+
     # User selected REMOVE a ROOM
-    if answer[1] == opt[1]:
+    elif answer[1] == opt[2]:
+        game.removeRoom()
+
+    # User selected CREATE an ITEM
+    elif answer[1] == opt[3]:
+        game.createItem()
     
-    # User selected CREATE an
-    if answer[1] == opt[1]:
+    # User selected EDIT an ITEM
+    elif answer[1] == opt[4]:
+        game.editItem()
     
-    # User selected CREATE an ROOM
-    if answer[1] == opt[1]:
+    # User selected REMOVE an ITEM
+    elif answer[1] == opt[5]:
+        game.removeItem()
     
-    # User selected CREATE an ROOM
-    if answer[1] == opt[1]:
+    # User selected SAVE STORY FILE
+    elif answer[1] == opt[6]:
+        game.saveStory()
     
-    # User selected CREATE a
-    if answer[1] == opt[1]:
+    # User selected SAVE AND EXIT
+    elif answer[1] == opt[7]:
+        game.saveStoryAndExit()
     
+    # User selected EXIT WITHOUT SAVING
+    elif answer[1] == opt[8]:
+        game.exitWithoutSave()    
      
     print("Ok so far.")
 
@@ -272,21 +288,6 @@ def create():
     
     return rooms
     
-
-def room_name_and_description():
-    fix = True
-    while fix ==True:
-        room_name = input("What is this area's name?")
-        room_description = input("""Please write the text you
-                                 want your player to see when he or
-                                 she enters this area""")
-        print(room_name, room_description)
-        correction = input("""Is this correct? Please type y for yes
-                           and n for no""")
-        if handle_human_input(correction) is True:
-            fix = False
-    return room_name, room_description
-
 #we do length of the list to make sure room number isn't repeated
 
 def create_connections(rooms,number):

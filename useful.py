@@ -1,6 +1,9 @@
 import readchar
 import os
 
+#Constant to determine the line break of some of the functions here
+LINE_BREAK = 73
+
 #This is a function that creates a menu for easier selection of options
 #and returns the highlighted item. 
 def showMenu( message, optionList ):
@@ -73,4 +76,21 @@ def formatHeader(header_msg):
 
     header += "--/\n"
     return header  
+
+def test_formatHeader():
+    text = "This is a very pretty header"
+    prettyHeader = formatHeader(text)
+    print(prettyHeader)
+
+# Function that breaks lines on a long string in nice places 
+# determined by the LINE_BREAK constant
+def formatLinebreaker(text):
+    prettyText = ""
+    charCount = 0;
     
+
+
+
+
+
+
