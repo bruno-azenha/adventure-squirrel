@@ -1,7 +1,10 @@
 import useful
+import Story
+import os
 
 def make_game():
-
+    
+    os.system('clear')    
     # Prompts the writer for his name
     print("Hello, what is your name?")
     writer_name = input()
@@ -17,7 +20,7 @@ def make_game():
         # Writer chose to CREATE a new game
         if answer[0] == 0:
             createNewGame(writer_name)
-            create_item()
+
         # Writer chose to EDIT a saved game
         elif answer[0] == 1:
             editSavedGame()
@@ -42,13 +45,14 @@ def createNewGame(writer_name):
     
     # Here we create a mock game object - although Bruno believes it would be 
     # better to make that the last thing to do.
-    game = Game()
+    game = Story.GameStory()
 
     # Here we will have our user create his/her game
     print(
 """Hey there {0}! We are going to ask you a few questions to help
 you creating your own text-based adventure game. Please be sure to
-have your room connections, items, and actions already in mind."""
+have your room connections, items, and actions already in mind.
+"""
 .format(writer_name)
     )
      
@@ -65,7 +69,7 @@ have your room connections, items, and actions already in mind."""
 
     # Add stuff to the game:
     game = writeGame(game)
-
+    
     # create_item()
     
     #now we will create rooms
@@ -85,52 +89,55 @@ def previewSavedGame():
     
 #This function keeps prompting the user for additions for his game
 def writeGame(game):
-   
-    msg = useful.formatHeader("What do you want to do?")
-    opt = ["CREATE a ROOM", "EDIT a ROOM", "REMOVE a ROOM",
-           "CREATE an ITEM", "EDIT an ITEM", "REMOVE an ITEM",
-           "SAVE STORY FILE", "SAVE AND EXIT", "EXIT WITHOUT SAVING"]
     
-    answer = useful.showMenu(msg, opt)
-    
-    # User selected CREATE a ROOM
-    if answer[1] == opt[0]:
-        game.createRoom()        
 
-    # User selected EDIT a ROOM
-    elif answer[1] == opt[1]:
-        game.editRoom()
+    while True:
+        msg = useful.formatHeader("What do you want to do now?")
+        opt = ["CREATE a ROOM", "EDIT a ROOM", "REMOVE a ROOM",
+               "CREATE an ITEM", "EDIT an ITEM", "REMOVE an ITEM",
+               "SAVE STORY FILE", "SAVE AND EXIT", "EXIT WITHOUT SAVING"]
+        
+        answer = useful.showMenu(msg, opt)
+        
+        # User selected CREATE a ROOM
+        if answer[1] == opt[0]:
+            game.createRoom()
+            print("Ok so far.")        
 
-    # User selected REMOVE a ROOM
-    elif answer[1] == opt[2]:
-        game.removeRoom()
+        # User selected EDIT a ROOM
+        elif answer[1] == opt[1]:
+            game.editRoom()
 
-    # User selected CREATE an ITEM
-    elif answer[1] == opt[3]:
-        game.createItem()
-    
-    # User selected EDIT an ITEM
-    elif answer[1] == opt[4]:
-        game.editItem()
-    
-    # User selected REMOVE an ITEM
-    elif answer[1] == opt[5]:
-        game.removeItem()
-    
-    # User selected SAVE STORY FILE
-    elif answer[1] == opt[6]:
-        game.saveStory()
-    
-    # User selected SAVE AND EXIT
-    elif answer[1] == opt[7]:
-        game.saveStoryAndExit()
-    
-    # User selected EXIT WITHOUT SAVING
-    elif answer[1] == opt[8]:
-        game.exitWithoutSave()    
+        # User selected REMOVE a ROOM
+        elif answer[1] == opt[2]:
+            game.removeRoom()
+
+        # User selected CREATE an ITEM
+        elif answer[1] == opt[3]:
+            game.createItem()
+        
+        # User selected EDIT an ITEM
+        elif answer[1] == opt[4]:
+            game.editItem()
+        
+        # User selected REMOVE an ITEM
+        elif answer[1] == opt[5]:
+            game.removeItem()
+        
+        # User selected SAVE STORY FILE
+        elif answer[1] == opt[6]:
+            game.saveStory()
+        
+        # User selected SAVE AND EXIT
+        elif answer[1] == opt[7]:
+            game.saveStoryAndExit()
+        
+        # User selected EXIT WITHOUT SAVING
+        elif answer[1] == opt[8]:
+            break
+            game.exitWithoutSave()
+                
      
-    print("Ok so far.")
-
     #returns the modified game
     return game
     

@@ -30,6 +30,14 @@ What I've done so far
   that takes in a string and breaks it in a multiple line string if it is too
   big. Threshhold defaults to 70.
 
+- Now it runs but still on a very poor state, only CREATE ROOM work and
+  actually editing the connections does nothing
+
+- It is a MUST to create a function in useful.py to standardize the prompt
+  making of the user. Right now it's all around the place, with newlines in
+  random places and such thinks.
+
+
 #-------------------------------------------#
 # We should create a Makefile to do all of  #
 # the requirements for our program to work. #

@@ -44,7 +44,7 @@ def showMenu( message, optionList ):
 
         if key == ENTER:
             os.system('clear')
-            print('Selected: ' + str(optionList[cursor]))
+            # print('Selected: ' + str(optionList[cursor]))
             return cursor, optionList[cursor] 
  
         os.system('clear')
