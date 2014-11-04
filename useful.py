@@ -124,3 +124,4 @@ def testFormatLinebreak():
     print(prettyText)
     print(prettyText2)
 
+testFormatLinebreak()

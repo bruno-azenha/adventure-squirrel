@@ -90,7 +90,6 @@ def previewSavedGame():
 #This function keeps prompting the user for additions for his game
 def writeGame(game):
     
-
     while True:
         msg = useful.formatHeader("What do you want to do now?")
         opt = ["CREATE a ROOM", "EDIT a ROOM", "REMOVE a ROOM",
