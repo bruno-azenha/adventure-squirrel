@@ -26,6 +26,10 @@ What I've done so far
   classes for the story creation mode in order to get some better
   organization all around.
 
+- On the useful.py file, created a function formatLinebreak(string,[Threshold])
+  that takes in a string and breaks it in a multiple line string if it is too
+  big. Threshhold defaults to 70.
+
 #-------------------------------------------#
 # We should create a Makefile to do all of  #
 # the requirements for our program to work. #

@@ -1,8 +1,8 @@
 import readchar
 import os
 
-#Constant to determine the line break of some of the functions here
-LINE_BREAK = 73
+#Constant to determine the line break of some of the functions
+LINE_BREAK = 70
 
 #This is a function that creates a menu for easier selection of options
 #and returns the highlighted item. 
@@ -77,20 +77,50 @@ def formatHeader(header_msg):
     header += "--/\n"
     return header  
 
-def test_formatHeader():
+def testFormatHeader():
     text = "This is a very pretty header"
     prettyHeader = formatHeader(text)
     print(prettyHeader)
 
 # Function that breaks lines on a long string in nice places 
 # determined by the LINE_BREAK constant
-def formatLinebreaker(text):
-    prettyText = ""
-    charCount = 0;
+def formatLinebreak(text, threshold=LINE_BREAK):
     
+    # This will be the returned prettified text
+    prettyText = ""
 
+    # Split the text in words 
+    words = text.split()
 
+    wordIndex = 0
+    charCount = 0
+    while True:
+        
+        # Check if we got all the words 
+        if wordIndex >= len(words) :
+            break;
 
+        charCount += len(words[wordIndex])
+        
+        # Check if the word fits in the line
+        if charCount < threshold :
+            prettyText += words[wordIndex] + " "
+            
+        else :
+            charCount = len(words[wordIndex])
+            prettyText += '\n' + words[wordIndex] + " "
+            
+        wordIndex += 1
+    
+    return prettyText        
 
+     
+def testFormatLinebreak():
+    text = "This is a very long string that should have linke break and stuff, it is soo big that it is extra anoying to look at it. It is very very ugly! Seriously, what the fuck is this??? Makes me want to puke."
 
+    prettyText = formatLinebreak(text, 30)
+    prettyText2 = formatLinebreak(text)
+    
+    print(prettyText)
+    print(prettyText2)
 
