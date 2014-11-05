@@ -1,5 +1,4 @@
 import useful
-import os
  
 DIRS = ["North", "South", "East", "West",
         "Northeast", "Northwest", "Southeast",
@@ -66,14 +65,14 @@ class RoomStory():
        
         # Loop to get the description right 
         while True:
-            os.system('clear')
+            useful.clearScreen()
             print(prettyName)
             print("""Please write the text you want your player 
 to see when he enters this area
 """)
             description = input()
 
-            os.system('clear')
+            useful.clearScreen()
             msg = prettyName + "\nIs the following description correct?\n";
             msg += useful.formatLinebreak(description)
             if useful.showMenu(msg, ["yes", "no"])[0] == 0:

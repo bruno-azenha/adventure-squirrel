@@ -1,3 +1,10 @@
+#-------------------#
+# showMenu()
+# formatHeader()
+# formatLinebreak()
+# clearScreen()
+#-------------------#
+
 import readchar
 import os
 
@@ -20,7 +27,7 @@ def showMenu( message, optionList ):
     #Cursor position is an integer initially at the first element
     cursor = 0;
 
-    os.system('clear') 
+    clearScreen() 
 
     #This is the loop that prints the menu
     while True:
@@ -43,21 +50,11 @@ def showMenu( message, optionList ):
             cursor = cursor+1 if cursor < len(optionList)-1 else cursor
 
         if key == ENTER:
-            os.system('clear')
+            clearScreen()
             # print('Selected: ' + str(optionList[cursor]))
             return cursor, optionList[cursor] 
  
-        os.system('clear')
-
-def test_showMenu():
-    directions = ["north", "south", "east", "west",
-                  "northeast", "northwest", "southeast",
-                  "southwest", "up", "down", "in", "out"]
-
-    direction, cursor = showMenu( "To which direction are you facing?", directions )
-
-    print('Option: ' + direction)
-    print('Index: ' + str(cursor))
+        clearScreen()
 
 # Function to provide nice header messages all around
 def formatHeader(header_msg):
@@ -76,11 +73,6 @@ def formatHeader(header_msg):
 
     header += "--/\n"
     return header  
-
-def testFormatHeader():
-    text = "This is a very pretty header"
-    prettyHeader = formatHeader(text)
-    print(prettyHeader)
 
 # Function that breaks lines on a long string in nice places 
 # determined by the LINE_BREAK constant
@@ -114,6 +106,27 @@ def formatLinebreak(text, threshold=LINE_BREAK):
     
     return prettyText        
 
+# Function that clears the Screen for both Windows and Unix
+def clearScreen():
+    os.system('cls' if os.name == 'nt' else 'clear') 
+
+
+
+#----- TESTS -----#    
+def test_showMenu():
+    directions = ["north", "south", "east", "west",
+                  "northeast", "northwest", "southeast",
+                  "southwest", "up", "down", "in", "out"]
+
+    direction, cursor = showMenu( "To which direction are you facing?", directions )
+
+    print('Option: ' + direction)
+    print('Index: ' + str(cursor))
+
+def testFormatHeader():
+    text = "This is a very pretty header"
+    prettyHeader = formatHeader(text)
+    print(prettyHeader)
      
 def testFormatLinebreak():
     text = "This is a very long string that should have linke break and stuff, it is soo big that it is extra anoying to look at it. It is very very ugly! Seriously, what the fuck is this??? Makes me want to puke."
@@ -123,5 +136,3 @@ def testFormatLinebreak():
     
     print(prettyText)
     print(prettyText2)
-
-testFormatLinebreak()
