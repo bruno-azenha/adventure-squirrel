@@ -1,6 +1,8 @@
 import useful
 import Story
 import os
+import pickle
+import time
 
 def make_game():
     
@@ -70,15 +72,28 @@ have your room connections, items, and actions already in mind.
     # Add stuff to the game:
     game = writeGame(game)
     
-    # create_item()
-    
-    #now we will create rooms
-    #create_rooms()
 
 # Loads a story file and puts the user back on the pipeline of game making
 # THIS IS NOT YET IMPLEMENTED
 def editSavedGame():    
-    print("EDIT SAVED GAME IS NOT YET IMPLEMENTED")
+    #print("EDIT SAVED GAME IS NOT YET IMPLEMENTED")
+
+    while True:
+        filename = input("What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
+        game = None
+        try:
+            with open(filename,'rb') as f:
+                game = pickle.load(f)
+            break
+
+        except FileNotFoundError:
+            print("The file doesn't exist. Try again.")
+
+    print("The game info has been loaded.")
+    print("You can now continue to edit the saved game.")
+    time.sleep(3)
+    # then the user would continue to edit the saved game
+    game = writeGame(game)
 
 # The idea is that a user can play his unfinished game through here and
 # still retain his editing skills.
@@ -126,17 +141,44 @@ def writeGame(game):
         
         # User selected SAVE STORY FILE
         elif answer[1] == opt[6]:
-            game.saveStory()
+            # store the entire game object which contains
+            # all the info of the game, including rooms, players,
+            # items, actions, etc.
+            while True:
+                filename = input("What will be name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
+                if filename.endswith(".pickle"):
+                    break
+                else:
+                    print("The file must be a pickle file.")
+
+            with open(filename,'wb') as f:
+                pickle.dump(game, f)
+
+            print("The game has been saved.")
+            time.sleep(3)
         
         # User selected SAVE AND EXIT
         elif answer[1] == opt[7]:
-            game.saveStoryAndExit()
+
+            while True:
+                filename = input("What will be name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
+                if filename.endswith(".pickle"):
+                    break
+                else:
+                    print("The file must be a pickle file.")
+
+            with open(filename,'wb') as f:
+                pickle.dump(game, f)
+
+            print("The game has been saved.")
+            time.sleep(3)
+
+            #exit the game
+            break
         
         # User selected EXIT WITHOUT SAVING
         elif answer[1] == opt[8]:
             break
-            game.exitWithoutSave()
-                
      
     #returns the modified game
     return game
