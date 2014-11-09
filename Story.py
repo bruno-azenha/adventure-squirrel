@@ -14,16 +14,41 @@ class GameStory():
         self.gameMap = GameMapStory()
 
     def createRoom(self):
-        newRoom = RoomStory()        
-        self.rooms.append(RoomStory) #are we appending a class or an object?
+        newRoom = RoomStory()       
+        self.rooms = RoomStory.instances
         self.gameMap = newRoom.editConnections(self.gameMap) #need to work with this
         print("Ok so far.") 
 
-    def editRoom():
-        print("NOT YET IMPLEMENTED")
+    def editRoom(self):
+        useful.clearScreen()
+        msg = "Which room do you want to edit?"
+        opt = self.rooms
+        opt.append("Return")
+        answer = useful.showMenu(msg, opt)
+        print(answer)
+        for i in range(len(self.rooms)):
+            if answer[1] == opt[i]:
+                opt[i].editConnections()
+            elif answer[1] == opt[len(self.rooms)]:
+                print("need to go back")
 
-    def removeRoom():
-        print("NOT YET IMPLEMENTED")
+    def removeRoom(self):
+        #show list of all rooms
+        #select room and then go remove it
+        useful.clearScreen()
+        msg = "Which room do you want to remove?"
+        opt = self.rooms
+        opt.append("Return")
+        answer = useful.showMenu(msg, opt)
+        print(answer)
+        
+        for i in range(len(self.rooms)):
+            if answer[1] == opt[i]:
+                opt[i].remove_self()
+                self.rooms = RoomStory()
+                #also need to update game Map
+            elif answer[1] == opt[len(self.rooms)]:
+                print("need to go back")
 
     def createItem():
         print("NOT YET IMPLEMENTED")
@@ -93,7 +118,7 @@ to see when he enters this area
 
     # Method to edit the connection list of a room
     # it returns an updated gameMap
-    def editConnections(self, gameMap):
+    def edit_connections(self, gameMap):
         header = useful.formatHeader(self.name)
         options = get_options()
         options.append("Return")
@@ -105,14 +130,14 @@ to see when he enters this area
         #see if this is true?
         for i in range(len(DIRS)):
             if answer[1] == options[i]:
-                update_connections(i)
+                update_connection(i)
                 #how to get previous menu back?
         if answer[1] == options[len(DIRS)]:
             gm = GameMapStory()
             return gm
         
     
-    def update_connections(self,direction_number):
+    def update_connection(self,direction_number):
         direction = DIRS[direction_number]
         roomNames = [room.name for room in RoomStory.instances]
         useful.clearScreen()
@@ -127,13 +152,29 @@ to see when he enters this area
             if answer[1] == opt[i]:
                 #if the room connection is index i
                 self.connections[direction_number] = i
-                self.dictOfConnections[direction] = i #make sure it changes dict
+                self.dictOfConnections[direction] = self.instances[i]
     
     def get_options(self):
         opts = [None]*len(DIRS)
         for i in range(DIRS):
             opts[i] = DIRS[i] + " " + self.dictOfConnections[DIRS[i]]
         return opts
+    
+    def remove_self(self):
+        """We need to remove all connections and the instance
+        from our Room Story lis
+        """
+        for room in RoomStory.instances:
+            if self in room.dictOfConnections.values():
+                [item = "None" for item in room.dictOfConnections.values()
+                 if item==self]
+                [index = -1 for index in room.connections
+                if index==self.index]
+        
+        RoomStory.counter-=1 #lower counter
+        RoomStory.instances.remove(self)
+        
+    
 
 # Class to store the information of each item object  
 class ItemStory():
