@@ -73,23 +73,25 @@ have your room connections, items, and actions already in mind.
     
 
 # Loads a story file and puts the user back on the pipeline of game making
-# THIS IS NOT YET IMPLEMENTED
-def editSavedGame():    
-    #print("EDIT SAVED GAME IS NOT YET IMPLEMENTED")
 
+def editSavedGame():    
+
+    game = None
     while True:
-        filename = input("What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
-        game = None
+
+        intro = useful.formatLinebreak("What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+        filename = input(intro + "\n"*2)
+        
         try:
             with open(filename,'rb') as f:
                 game = pickle.load(f)
             break
 
         except FileNotFoundError:
-            print("The file doesn't exist. Try again.")
+            print("\nThe file doesn't exist. Try again.\n")
 
-    print("The game info has been loaded.")
-    print("You can now continue to edit the saved game.")
+    print("The game info has been loaded.\n")
+    print("You can now continue to edit the saved game.\n")
     time.sleep(3)
     # then the user would continue to edit the saved game
     game = writeGame(game)
@@ -143,32 +145,39 @@ def writeGame(game):
             # all the info of the game, including rooms, players,
             # items, actions, etc.
             while True:
-                filename = input("What will be name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
+
+                intro = useful.formatLinebreak("What will be the name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+
+                filename = input(intro + "\n"*2)
                 if filename.endswith(".pickle"):
                     break
                 else:
-                    print("The file must be a pickle file.")
+                    print("The file must be a pickle file.\n")
 
             with open(filename,'wb') as f:
                 pickle.dump(game, f)
 
-            print("The game has been saved.")
+            print("\nThe game has been saved.")
             time.sleep(3)
         
         # User selected SAVE AND EXIT
         elif answer[1] == opt[7]:
 
             while True:
-                filename = input("What will be name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")")
+
+                intro = useful.formatLinebreak("What will be the name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+
+                filename = input(intro + "\n"*2)
+
                 if filename.endswith(".pickle"):
                     break
                 else:
-                    print("The file must be a pickle file.")
+                    print("The file must be a pickle file.\n")
 
             with open(filename,'wb') as f:
                 pickle.dump(game, f)
 
-            print("The game has been saved.")
+            print("\nThe game has been saved.\n")
             time.sleep(3)
 
             #exit the game
