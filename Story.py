@@ -12,11 +12,12 @@ class GameStory():
     def __init__(self):
         self.name = ""
         self.rooms = []
+        self.items = []
         self.gameMap = GameMapStory()
 
     def createRoom(self):
         newRoom = RoomStory()        
-        self.rooms.append(RoomStory)
+        self.rooms.append(newRoom)
         self.gameMap = newRoom.editConnections(self.gameMap)
         print("Ok so far.") 
 
@@ -26,11 +27,18 @@ class GameStory():
     def removeRoom():
         print("NOT YET IMPLEMENTED")
 
-    def createItem():
-        print("NOT YET IMPLEMENTED")
+    def createItem(self):
+        newItem = ItemStory()
+        self.items.append(newItem)
 
-    def editItem():
-        print("NOT YET IMPLEMENTED")
+    def editItem(self):
+        # Creates a List with the names of each item:
+        item_names = []
+        for item in self.items:
+            item_names.append(item.name)
+        item_names.append("GO_BACK")
+        msg = "\nChose the item you wish to edit:\n"
+        answer = useful.showMenu(msg, item_names)
 
     def removeItem():
         print("NOT YET IMPLEMENTED")
@@ -103,7 +111,41 @@ class ItemStory():
 
     # Constructor
     def __init__(self):
-        self.name = ""
+        # Gets the name of this item
+        print("What is this item's name?")
+        self.name = input()
+        prettyName = useful.formatHeader(self.name)
+       
+        # Loop to get the description right 
+        while True:
+            os.system('clear')
+            print(prettyName)
+            print("Please write the description of this item.\n")
+            description = input()
+            os.system('clear')
+            msg = prettyName + "\nIs the following description correct?\n";
+            msg += useful.formatLinebreak(description)
+            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+                self.description = description
+                break
+
+        # Placeble in the inventory? 
+        msg = prettyName + "\nCan the user pick this item up?\n";
+        msg += useful.formatLinebreak(description)
+        if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+            self.isPickable = True
+ 
+            # Droppable? 
+            msg = prettyName + "\nCan the user drop this item from his inventory?\n";
+            msg += useful.formatLinebreak(description)
+            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+                self.isDroppable = True
+            else: self.isDroppable = False
+        
+        else:
+            self.isPickable = False 
+            self.isDroppable = False
+
 
 # Class to store the room connections
 class GameMapStory(list):
