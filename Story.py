@@ -23,10 +23,10 @@ class GameStory():
         self.rooms.append(newRoom)
         self.gameMap = newRoom.editConnections(self.gameMap)
 
-    def editRoom():
+    def editRoom(self):
         print("NOT YET IMPLEMENTED")
 
-    def removeRoom():
+    def removeRoom(self):
         print("NOT YET IMPLEMENTED")
 
     def createItem(self):
