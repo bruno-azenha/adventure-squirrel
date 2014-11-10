@@ -16,6 +16,8 @@ class GameStory():
         self.items = []
         self.gameMap = GameMapStory()
 
+        
+
     def createRoom(self):
         newRoom = RoomStory()        
         self.rooms.append(newRoom)
