@@ -6,7 +6,7 @@ import time
 
 def make_game():
     
-    os.system('clear')    
+    useful.clearScreen()    
     # Prompts the writer for his name
     print("Hello, what is your name?")
     writer_name = input()
