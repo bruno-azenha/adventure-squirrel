@@ -17,7 +17,6 @@ class GameStory():
         newRoom = RoomStory()        
         self.rooms.append(RoomStory)
         self.gameMap = newRoom.editConnections(self.gameMap)
-        print("Ok so far.") 
 
     def editRoom():
         print("NOT YET IMPLEMENTED")
