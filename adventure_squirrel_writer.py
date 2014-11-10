@@ -1,6 +1,5 @@
 import useful
 import Story
-import os
 import pickle
 import time
 

@@ -4,6 +4,8 @@ DIRS = ["North", "South", "East", "West",
         "Northeast", "Northwest", "Southeast",
         "Southwest", "Up", "Down", "In", "Out", "FINISHED"]
 
+EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
+             "AVAILABLE ACTIONS"]
 # Master Class to store all the game information
 class GameStory():
 
@@ -37,9 +39,66 @@ class GameStory():
         item_names.append("GO_BACK")
         msg = "\nChose the item you wish to edit:\n"
         answer = useful.showMenu(msg, item_names)
+        useful.clearScreen()
 
-    def removeItem():
-        print("NOT YET IMPLEMENTED")
+        if answer[1] == "GO_BACK":
+            return 0
+
+        i = answer[0] # Item index
+
+        # Gives the options of editing the item
+        msg = "\nWhat would you like to EDIT?\n"
+        self.items[i]
+
+        answer = useful.showMenu(msg, EDIT_ITEM)
+        if answer[1] == "NAME": # Edit Name
+            name = input("What is the new name?\n")
+            self.items[i].setName(name)
+
+        elif answer[1] == "DESCRIPTION": # Edit description
+            description = input("What is the new description?\n")
+            self.items[i].setDescription(description)
+
+        elif answer[1] == "INVENTORY BEHAVIOR": # Edit inv behavior
+            # Placeble in the inventory? 
+            msg = "\nCan the user pick this item up?\n";
+            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+                isPickable = True
+     
+                # Droppable? 
+                msg = "\nCan the user drop this item from his inventory?\n";
+                if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+                    isDroppable = True
+                else: isDroppable = False
+            
+            else:
+                isPickable = False 
+                isDroppable = False
+            
+            self.items[i].setInventory(isPickable, isDroppable)
+
+        elif answer[1] == "AVAILABLE ACTIONS": #Edit available actions
+            print("NOT YET IMPLEMENTED")
+
+    def removeItem(self):
+        
+        item_names = []
+        for item in self.items:
+            item_names.append(item.name)
+        item_names.append("GO_BACK")
+        msg = "\nChose the item you wish to remove:\n"
+        answer = useful.showMenu(msg, item_names)
+        useful.clearScreen()
+
+        if answer[1] == "GO_BACK":
+            return 0
+
+        i = answer[0] # Item index
+        
+        msg = "\nAre you sure you want to REMOVE this item?\n";
+        if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+            item = self.items.pop(i)
+        
 
     def saveStory():
         print("NOT YET IMPLEMENTED")
@@ -116,11 +175,11 @@ class ItemStory():
        
         # Loop to get the description right 
         while True:
-            os.system('clear')
+            useful.clearScreen()
             print(prettyName)
             print("Please write the description of this item.\n")
             description = input()
-            os.system('clear')
+            useful.clearScreen()
             msg = prettyName + "\nIs the following description correct?\n";
             msg += useful.formatLinebreak(description)
             if useful.showMenu(msg, ["yes", "no"])[0] == 0:
@@ -128,14 +187,14 @@ class ItemStory():
                 break
 
         # Placeble in the inventory? 
+        useful.clearScreen
         msg = prettyName + "\nCan the user pick this item up?\n";
-        msg += useful.formatLinebreak(description)
         if useful.showMenu(msg, ["yes", "no"])[0] == 0:
             self.isPickable = True
  
             # Droppable? 
+            useful.clearScreen()
             msg = prettyName + "\nCan the user drop this item from his inventory?\n";
-            msg += useful.formatLinebreak(description)
             if useful.showMenu(msg, ["yes", "no"])[0] == 0:
                 self.isDroppable = True
             else: self.isDroppable = False
@@ -144,6 +203,15 @@ class ItemStory():
             self.isPickable = False 
             self.isDroppable = False
 
+    def setName(self, name):
+        self.name = name
+
+    def setDescription(self, description):
+        self.description = description
+
+    def setInventory(self, isPickable, isDroppable):
+        self.isPickable = isPickable
+        self.isDroppable = isDroppable
 
 # Class to store the room connections
 class GameMapStory(list):
