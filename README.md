@@ -1,6 +1,4 @@
 adventure-squirrel
 ==================
 
-Adventure Squirrel - A text based adventure game engine
-
-Here, I will work on editing the rooms and their menus
+Here, I create the room object’s as a roomsquirrel class. 
