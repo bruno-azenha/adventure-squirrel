@@ -143,8 +143,8 @@ to see when he enters this area
         useful.clearScreen()
         roomNames.append("Return")
         headerHere = useful.formatHeader(self.name)
-        msg = headerHere + "\nSelect the room to add in " + direction +
-            "\nThe current connection is " + self.dictOfConnections[direction]
+        msg = headerHere + "\nSelect the room to add in " + direction
+        msg += "\nThe current connection is " + self.dictOfConnections[direction]
         answer = useful.showMenu(msg, roomNames)
         print(answer)
         

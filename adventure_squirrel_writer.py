@@ -137,6 +137,7 @@ def writeGame(game):
                 
      
     #returns the modified game
+<<<<<<< HEAD
     return game
     
 
@@ -432,3 +433,6 @@ def writeGame(game):
 
 #In here we are calling the method used to start the game making process.
 make_game()
+=======
+    return game
+>>>>>>> andrea
