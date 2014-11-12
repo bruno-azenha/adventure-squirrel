@@ -60,11 +60,11 @@ def Move(gameMap, direction):
     return True
 
 # Returns a list with the items that are in the players inventory 
-def Inventory(player):
+def Inventory(game):
     # Implemment inventory retrieval
-    print("NOT IMPLEMENTED")
-    inventory = []
-    return inventory
+    #print("NOT IMPLEMENTED")
+    
+    return game.player.inventory
 
 # Returns help text as string
 def ShowHelp():
