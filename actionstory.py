@@ -29,19 +29,22 @@ class CustomAction:
 # ------------------------------------------------------- #
 
 # Returns True if succeed, False otherwise 
-def Pick(item):
-    print("NOT IMPLEMENTED")
+def Pick(item, game):
+    #print("NOT IMPLEMENTED")
     if (item.isPickable):
         # Implement add to inventory
+        game.player.inventory.append(item)
         return True
     else: 
         return False
 
 # Returns True if succeed, False otherwise 
-def Drop(item):
-    print("NOT IMPLEMENTED")
+def Drop(item, game):
+    #print("NOT IMPLEMENTED")
+
     if (item.isDroppable):
         # Implement drop to room
+        game.player.inventory.remove(item)
         return True
     else:
         return False
