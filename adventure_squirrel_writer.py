@@ -2,6 +2,7 @@ import useful
 import Story
 import pickle
 import time
+import playersquirrel
 
 def make_game():
     
