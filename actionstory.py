@@ -54,10 +54,28 @@ def Examine(item):
     return item.description
 
 # Returns True if movement is valid, False otherwise
-def Move(gameMap, direction):
+def Move(game, direction):
     # Implement validity check
-    print("NOT IMPLEMENTED")
-    return True
+    # assume "direction" is a member of DIRS
+
+    # find where is the player
+    current_room = game.player.current_room
+
+    # get the connection of the current room
+    connections = current_room.connections
+
+    DIRS = ["North", "South", "East", "West",
+        "Northeast", "Northwest", "Southeast",
+        "Southwest", "Up", "Down", "In", "Out", "FINISHED"]
+
+    target_index = DIRS.index(direction)
+
+    # we can go this way
+    if connections[target_index] > 0:
+        return True
+    # we cannot go this way
+    else:
+        return False
 
 # Returns a list with the items that are in the players inventory 
 def Inventory(game):
