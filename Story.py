@@ -15,7 +15,7 @@ class GameStory():
         self.rooms = []
         self.items = []
         self.gameMap = GameMapStory()
-
+        self.player = Player()
         
 
     def createRoom(self):
