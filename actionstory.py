@@ -95,14 +95,32 @@ def ShowHelp():
 # Returns True if succes, False otherwise
 def SaveGame(game):
     # Implement save game
-    print("NOT IMPLEMENTED")
+    #print("NOT IMPLEMENTED")
+
+    game.saveStory()
     return True
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise
 def LoadGame(game):
     # Implement load game
-    print("NOT IMPLEMENTED")
+    #print("NOT IMPLEMENTED")
+    game = None
+    while True:
+
+        intro = useful.formatLinebreak("What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+        filename = input(intro + "\n"*2)
+        
+        try:
+            with open(filename,'rb') as f:
+                game = pickle.load(f)
+            break
+
+        except FileNotFoundError:
+            print("\nThe file doesn't exist. Try again.\n")
+
+    print("The game info has been loaded.\n")
+
     return True
 
 # Combine two items to generate a third
