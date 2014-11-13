@@ -1,5 +1,6 @@
 import useful
 import sys
+import playersquirrel
  
 DIRS = ["North", "South", "East", "West",
         "Northeast", "Northwest", "Southeast",
@@ -16,7 +17,7 @@ class GameStory():
         self.rooms = []
         self.items = []
         self.gameMap = GameMapStory()
-        self.player = Player()
+        self.player = playersquirrel.Player()
         
 
     def createRoom(self):
