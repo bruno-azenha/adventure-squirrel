@@ -1,3 +1,4 @@
+import useful
 #
 # Stories the information of each action and the 
 # suite of hardcoded functions for action effects
@@ -29,19 +30,22 @@ class CustomAction:
 # ------------------------------------------------------- #
 
 # Returns True if succeed, False otherwise 
-def Pick(item):
-    print("NOT IMPLEMENTED")
+def Pick(item, game):
+    #print("NOT IMPLEMENTED")
     if (item.isPickable):
         # Implement add to inventory
+        game.player.inventory.append(item)
         return True
     else: 
         return False
 
 # Returns True if succeed, False otherwise 
-def Drop(item):
-    print("NOT IMPLEMENTED")
+def Drop(item, game):
+    #print("NOT IMPLEMENTED")
+
     if (item.isDroppable):
         # Implement drop to room
+        game.player.inventory.remove(item)
         return True
     else:
         return False
@@ -51,17 +55,35 @@ def Examine(item):
     return item.description
 
 # Returns True if movement is valid, False otherwise
-def Move(gameMap, direction):
+def Move(game, direction):
     # Implement validity check
-    print("NOT IMPLEMENTED")
-    return True
+    # assume "direction" is a member of DIRS
+
+    # find where is the player
+    current_room = game.player.current_room
+
+    # get the connection of the current room
+    connections = current_room.connections
+
+    DIRS = ["North", "South", "East", "West",
+        "Northeast", "Northwest", "Southeast",
+        "Southwest", "Up", "Down", "In", "Out", "FINISHED"]
+
+    target_index = DIRS.index(direction)
+
+    # we can go this way
+    if connections[target_index] > 0:
+        return True
+    # we cannot go this way
+    else:
+        return False
 
 # Returns a list with the items that are in the players inventory 
-def Inventory(player):
+def Inventory(game):
     # Implemment inventory retrieval
-    print("NOT IMPLEMENTED")
-    inventory = []
-    return inventory
+    #print("NOT IMPLEMENTED")
+    
+    return game.player.inventory
 
 # Returns help text as string
 def ShowHelp():
@@ -74,14 +96,32 @@ def ShowHelp():
 # Returns True if succes, False otherwise
 def SaveGame(game):
     # Implement save game
-    print("NOT IMPLEMENTED")
+    #print("NOT IMPLEMENTED")
+
+    game.saveStory()
     return True
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise
 def LoadGame(game):
     # Implement load game
-    print("NOT IMPLEMENTED")
+    #print("NOT IMPLEMENTED")
+    game = None
+    while True:
+
+        intro = useful.formatLinebreak("What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+        filename = input(intro + "\n"*2)
+        
+        try:
+            with open(filename,'rb') as f:
+                game = pickle.load(f)
+            break
+
+        except FileNotFoundError:
+            print("\nThe file doesn't exist. Try again.\n")
+
+    print("The game info has been loaded.\n")
+
     return True
 
 # Combine two items to generate a third

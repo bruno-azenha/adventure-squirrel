@@ -1,4 +1,6 @@
 import useful
+import sys
+import playersquirrel
  
 DIRS = ["North", "South", "East", "West",
         "Northeast", "Northwest", "Southeast",
@@ -17,7 +19,7 @@ class GameStory():
         self.rooms = []
         self.items = []
         self.gameMap = GameMapStory()
-
+        self.player = playersquirrel.Player()
         
 
     def createRoom(self):
@@ -104,14 +106,38 @@ class GameStory():
             item = self.items.pop(i)
         
 
-    def saveStory():
-        print("NOT YET IMPLEMENTED")
+    def saveStory(self):
+        while True:
 
-    def saveStoryAndExit():
-        print("NOT YET IMPLEMENTED")
+            intro = useful.formatLinebreak("What will be the name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")",50)
+
+            filename = input(intro + "\n"*2)
+            if filename.endswith(".pickle"):
+                break
+            else:
+                print("The file must be a pickle file.\n")
+
+        # create a game obejct as exactly the same as "self"
+        tmp = GameStory()
+        tmp.name = self.name
+        tmp.rooms = self.rooms
+        tmp.items = self.items
+        tmp.gameMap = self.gameMap
+        tmp.player = self.player
+
+        with open(filename,'wb') as f:
+            pickle.dump(tmp, f)
+
+        print("\nThe game has been saved.")
+
+    def saveStoryAndExit(self):
+        
+        self.saveStory()
+        sys.exit()
 
     def exitWithoutSave():
-        print("NOT YET IMPLEMENTED")
+        #print("NOT YET IMPLEMENTED")
+        sys.exit()
 
 
 # Class to store the information of each room object 
