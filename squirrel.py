@@ -8,10 +8,12 @@
 # Ask(()
 
 import curses
-import useful
-import Story
 import pickle
 import time
+
+import useful
+import Story
+import roomsquirrel
 
 MENU_TOP = ["CREATE a new game", "EDIT a saved game", 
             "EXIT this program"]
@@ -23,12 +25,17 @@ MENU_EDIT_GAME = ["CHANGE NAME", "WRITE HELP", "WRITE CREDITS", "BACK"]
 
 MENU_ROOMS = ["ADD Room", "EDIT Room", "REMOVE Room", "BACK"]
 
+MENU_EDIT_ROOM = ["NAME", "DESCRIPTION", "CONNECTIONS", "BACK"]
+
 MENU_ITEMS = ["ADD Item", "EDIT Item", "REMOVE Item", "BACK"]
 
 MENU_EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
              "AVAILABLE ACTIONS", "BACK"]
 
 MENU_CONFIRM = ["YES", "NO"]
+
+MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST"
+             "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT", "-- BACK --"]
 
 
 def main(screen):
@@ -196,15 +203,20 @@ def WriteRooms(GAME, screen):
         # END BACK #
 
 def AddRoom(GAME, screen): 
-    screen.clear()
 
     # Get the name of the room
+    screen.clear()
     header = GAME.name
     question = "What is the name of this room?"
     name = AskWithConfirm(header, question, screen)
 
-    Room = Story.RoomStory()
-    Room.name = name
+    # Get the description of the room
+    screen.clear()
+    header = name
+    question = "What is the description of this room?"
+    description = AskWithConfirm(header, question, screen)
+
+    Room = roomsquirrel.RoomSquirrel(name, description)
     GAME.rooms.append(Room)
 
 def EditRoom(GAME, screen): 
@@ -219,13 +231,82 @@ def EditRoom(GAME, screen):
         
         RoomMenu = [(r.name) for r in GAME.rooms]
         RoomMenu.append("BACK")
-        selection = ShowMenu(RoomMenu, screen, 6, 0)
+        roomselected = ShowMenu(RoomMenu, screen, 6, 0)
     
-        if selection[0] == "BACK":
+        if roomselected[0] == "BACK":
             break
 
         else:
-            GAME.editRoom(selection[0])
+            while True:
+                screen.clear()
+                room = GAME.rooms[roomselected[1]]
+                header = room.name
+                name = "Name: " + room.name
+                description = "Description: " + room.description
+                 
+                screen = PrintHeader(header, screen, 0, 0)
+                screen = PrintText(name, screen, 4, 0)
+                screen = PrintText(description, screen, 5, 0)
+                screen = PrintText(str(GAME.rooms[roomselected[1]].connections), screen, 6, 0)
+                # WE NEED TO PRINT THE CONNECTIONS HERE
+                
+                # -----------------------
+
+                question = "What would you like to change?"            
+                screen = PrintText(question, screen, 7, 0)
+                selection = ShowMenu(MENU_EDIT_ROOM, screen, 9, 0)
+
+                # EDIT NAME #
+                if selection[0] == MENU_EDIT_ROOM[0]:
+                    screen.clear()
+                    question = "What is the new name of this room?"
+                    name = AskWithConfirm(header, question, screen)
+                    GAME.rooms[roomselected[1]].name = name # roomselected[1] is the index 
+                    header = name                            # of the selected room
+                # END EDIT NAME #
+
+                # EDIT DESCRIPTION #
+                elif selection[0] == MENU_EDIT_ROOM[1]:
+                    screen.clear()
+                    question = "What is the new description of this room?"
+                    description = AskWithConfirm(header, question, screen)
+                    GAME.rooms[roomselected[1]].description = description                    
+                # END EDIT DESCRIPTION #
+
+                # EDIT CONNECTIONS #
+                elif selection[0] == MENU_EDIT_ROOM[2]:
+                    screen.clear()
+                    question = "Which direction do you want to edit?"
+                    screen = PrintHeader(header, screen, 0, 0)
+                    screen = PrintText(question, screen, 4, 0)
+                    selectedDirection = ShowMenu(MENU_DIRS, screen, 6, 0)
+                    EditRoomConnection(GAME, screen, roomselected[1], selectedDirection[1])
+                    
+                # END EDIT CONNECTIONS #
+
+                elif selection[0] == "BACK":
+                    break
+        
+def EditRoomConnection(GAME, screen, room, direction):
+    while True:
+        screen.clear()
+
+        # Chose Room to Edit
+        header = GAME.rooms[room].name
+        question = "Which room would you like to connect through direction " + MENU_DIRS[direction] + "?"
+        screen = PrintHeader(header, screen, 0, 0)
+        screen = PrintText(question, screen, 4, 0)
+        
+        RoomMenu = [(r.name) for r in GAME.rooms]
+        RoomMenu.append("BACK")
+        roomselected = ShowMenu(RoomMenu, screen, 6, 0)
+    
+        if roomselected[0] == "BACK":
+            break
+
+        else:
+            GAME.EditConnection(room, roomselected[1], direction)
+            break
 
 def RemoveRoom(GAME, screen):
     while True:

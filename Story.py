@@ -1,13 +1,9 @@
 import useful
 import sys
 import playersquirrel
+import roomsquirrel
  
-DIRS = ["North", "South", "East", "West",
-        "Northeast", "Northwest", "Southeast",
-        "Southwest", "Up", "Down", "In", "Out", "FINISHED"]
 
-EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
-             "AVAILABLE ACTIONS"]
 # Master Class to store all the game information
 class GameStory():
 
@@ -29,6 +25,9 @@ class GameStory():
 
     def editRoom(self, room):
         print("NOT YET IMPLEMENTED")
+
+    def EditConnection(self, fromRoom, toRoom, direction):
+        self.rooms[fromRoom].edit_connection(direction, toRoom)
 
     def removeRoom(self, room):
         print("NOT YET IMPLEMENTED")
@@ -150,6 +149,7 @@ class RoomStory():
     # Constructor
     def __init__(self):
         self.name = ""        
+        self.description = ""
         # Something like this will be used for the indexing of rooms in the game map
         # self.index = index
         # index += 1
