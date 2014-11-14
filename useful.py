@@ -9,7 +9,7 @@ import readchar
 import os
 
 #Constant to determine the line break of some of the functions
-LINE_BREAK = 70
+LINE_BREAK = 60
 
 #This is a function that creates a menu for easier selection of options
 #and returns the highlighted item. 

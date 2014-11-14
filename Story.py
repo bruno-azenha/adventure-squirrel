@@ -12,6 +12,8 @@ class GameStory():
     # Constructor
     def __init__(self):
         self.name = ""
+        self.instructions = ""
+        self.credits = ""
         self.rooms = []
         self.items = []
         self.gameMap = GameMapStory()
@@ -23,10 +25,10 @@ class GameStory():
         self.rooms.append(newRoom)
         self.gameMap = newRoom.editConnections(self.gameMap)
 
-    def editRoom(self):
+    def editRoom(self, room):
         print("NOT YET IMPLEMENTED")
 
-    def removeRoom(self):
+    def removeRoom(self, room):
         print("NOT YET IMPLEMENTED")
 
     def createItem(self):
@@ -121,32 +123,32 @@ class RoomStory():
 
     # Constructor
     def __init__(self):
-        
+        self.name = ""        
         # Something like this will be used for the indexing of rooms in the game map
         # self.index = index
         # index += 1
         
         # Gets the name of this room
-        print("What is this area's name?")
-        self.name = input()
-        prettyName = useful.formatHeader(self.name)
+#        print("What is this area's name?")
+#        self.name = input()
+#        prettyName = useful.formatHeader(self.name)
        
         # Loop to get the description right 
-        while True:
-            useful.clearScreen()
-            print(prettyName)
-            print("""Please write the text you want your player 
-to see when he enters this area
-""")
-            description = input()
+#        while True:
+#            useful.clearScreen()
+#            print(prettyName)
+#            print("""Please write the text you want your player 
+#to see when he enters this area
+#""")
+#            description = input()
+#
+#            useful.clearScreen()
+#            msg = prettyName + "\nIs the following description correct?\n";
+#            msg += useful.formatLinebreak(description)
+#            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
+#                break    
 
-            useful.clearScreen()
-            msg = prettyName + "\nIs the following description correct?\n";
-            msg += useful.formatLinebreak(description)
-            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
-                break    
-
-        self.connections = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+#        self.connections = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
         # For the connections information: I'm not sure we should have it
         # duplicate, as of now, we have the same information in the Room
         # object and also in the game map object. Which is handy, but not nice.
@@ -169,41 +171,11 @@ to see when he enters this area
 class ItemStory():
 
     # Constructor
-    def __init__(self):
-        # Gets the name of this item
-        print("What is this item's name?")
-        self.name = input()
-        prettyName = useful.formatHeader(self.name)
-       
-        # Loop to get the description right 
-        while True:
-            useful.clearScreen()
-            print(prettyName)
-            print("Please write the description of this item.\n")
-            description = input()
-            useful.clearScreen()
-            msg = prettyName + "\nIs the following description correct?\n";
-            msg += useful.formatLinebreak(description)
-            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
-                self.description = description
-                break
-
-        # Placeble in the inventory? 
-        useful.clearScreen
-        msg = prettyName + "\nCan the user pick this item up?\n";
-        if useful.showMenu(msg, ["yes", "no"])[0] == 0:
-            self.isPickable = True
- 
-            # Droppable? 
-            useful.clearScreen()
-            msg = prettyName + "\nCan the user drop this item from his inventory?\n";
-            if useful.showMenu(msg, ["yes", "no"])[0] == 0:
-                self.isDroppable = True
-            else: self.isDroppable = False
-        
-        else:
-            self.isPickable = False 
-            self.isDroppable = False
+    def __init__(self, name, desc, pick, drop):
+        self.name = name
+        self.description = desc
+        self.isPickable = pick
+        self.isDroppable = drop
 
     def setName(self, name):
         self.name = name
