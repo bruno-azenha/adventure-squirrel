@@ -21,7 +21,7 @@ class CustomAction:
         index = 0
         for fun in self.listOfFunctions:
             # This shouldn't run yet 
-            fun(listOfArguments[index])
+            fun(*listOfArguments[index])
             index += 1
         
 

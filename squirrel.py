@@ -12,8 +12,9 @@ import pickle
 import time
 
 import useful
-import Story
+import gamesquirrel
 import roomsquirrel
+import itemsquirrel
 
 MENU_TOP = ["CREATE a new game", "EDIT a saved game", 
             "EXIT this program"]
@@ -59,7 +60,7 @@ def main(screen):
         screen.clear()
         
         # Initialize the Game
-        GAME = Story.GameStory()
+        GAME = gamesquirrel.GameSquirrel()
         
         # Ask for the name of the game
         question = "What is the name of your game?"
@@ -401,7 +402,7 @@ def AddItem(GAME, screen):
             isPickable = False
             isDroppable = False
 
-        newItem = Story.ItemStory(name, description, isPickable, isDroppable)
+        newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
         GAME.items.append(newItem)
         
          
