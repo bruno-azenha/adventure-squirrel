@@ -9,7 +9,6 @@
 
 import curses
 import useful
-import MenuStructure
 import Story
 import pickle
 import time
@@ -533,15 +532,13 @@ def ShowMenu(menu, screen, lin, col):
             current += 1    
  
         key = screen.getch()
-        if key == 'Q':
-            break
         if key == curses.KEY_UP:
             cursor = cursor-1 if cursor > 1 else 0
         
         if key == curses.KEY_DOWN:
             cursor = cursor+1 if cursor < len(menu)-1 else cursor
 
-        if key == curses.KEY_RIGHT:
+        if key == 10:
             return (menu[cursor], cursor) 
 
 # Function that stays in the loop until the user confirms the input
