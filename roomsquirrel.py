@@ -27,9 +27,6 @@ class RoomSquirrel():
         #self.dictOfConnections[direction] = self.instances[room_number]
 
     #def remove_self(self):
-        """We need to remove all connections and the instance
-        from our Room Story lis
-        """
         #for room in RoomSquirrel.instances:
         #    if self in room.dictOfConnections.values():
         #        [item = None for item in room.dictOfConnections.values()
