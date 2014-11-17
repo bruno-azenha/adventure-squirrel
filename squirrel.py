@@ -75,7 +75,7 @@ def main(screen):
         elif selection[0] == MENU_TOP[1]:
             screen.clear()
            
-            question = "What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")"
+            question = "What is name of the pickle file that contains the game information?"
             # Ask for the name of the pickle file
             while True:
                 filename = Ask(header, question, screen)
