@@ -45,54 +45,68 @@ def main(screen):
     screen = curses.initscr()
     curses.curs_set(False) # Removes blinking cursor
 
-    screen.clear()
 
     header = "Adventure Squirrel"
 
-    # TOP MENU #     
-    screen = PrintHeader(header, screen, 0, 0) 
-    screen = PrintText("A text-based adventure game engine", screen, 4, 0)   
-    selection = ShowMenu(MENU_TOP, screen, 6, 0)
-    # End TOP MENU #
-    
-    # BEGIN Create a new game #
-    if selection[0] == MENU_TOP[0]:
+    while True:
         screen.clear()
+        # TOP MENU #     
+        screen = PrintHeader(header, screen, 0, 0) 
+        screen = PrintText("A text-based adventure game engine", screen, 4, 0)   
+        selection = ShowMenu(MENU_TOP, screen, 6, 0)
+        # End TOP MENU #
         
-        # Initialize the Game
-        GAME = gamesquirrel.GameSquirrel()
-        
-        # Ask for the name of the game
-        question = "What is the name of your game?"
-        GAME.name = AskWithConfirm(header, question, screen)
+        # BEGIN Create a new game #
+        if selection[0] == MENU_TOP[0]:
+            screen.clear()
+            
+            # Initialize the Game
+            GAME = gamesquirrel.GameSquirrel()
+            
+            # Ask for the name of the game
+            question = "What is the name of your game?"
+            GAME.name = AskWithConfirm(header, question, screen)
 
-        WriteGame(GAME, screen)
-    # END Create a new game#
+            WriteGame(GAME, screen)
+            break
+        # END Create a new game#
 
-    # BEGIN EDIT a saved game #
-    elif selection[0] == MENU_TOP[1]:
-        screen.clear()
-       
-        question = "What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")"
-        # Ask for the name of the pickle file
-        while True:
-            filename = Ask(header, question, screen)
-            GAME = LoadStory(filename)
-            if GAME == -1:
-                question = "The file '" + filename + "' was not found. Try again."
-            else: 
-                break 
-        WriteGame(GAME, screen)
-    # END EDIT a saved game #                 
+        # BEGIN EDIT a saved game #
+        elif selection[0] == MENU_TOP[1]:
+            screen.clear()
+           
+            question = "What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")"
+            # Ask for the name of the pickle file
+            while True:
+                filename = Ask(header, question, screen)
+                filename += ".pickle" 
+                GAME = LoadStory(filename)
+                if GAME == -1:
+                    screen.clear()
+                    question2 = "The file '" + filename + "' was not found. Do you want to try a different one?."
+                    screen = PrintHeader(header, screen, 0, 0)
+                    screen = PrintText(question2, screen, 4, 0)
+                    again = ShowMenu(MENU_CONFIRM, screen, 6, 0)
+                    if again[0] != "YES":
+                        break
+                    
+                else: 
+                    WriteGame(GAME, screen)
+                    break
+            if GAME != -1:
+                break
+        # END EDIT a saved game #                 
 
-    # BEGIN EXIT THIS PROGRAM #
-    else:
-        screen.clear()
-        screen = PrintHeader(header, screen, 0, 0)
-        screen = PrintText("It was good to have you around!", screen, 4, 0)
-        screen.refresh()
-        time.sleep(2)
-    # END EXIT this program#
+        # BEGIN EXIT THIS PROGRAM #
+        else:
+            screen.clear()
+            screen = PrintHeader(header, screen, 0, 0)
+            screen = PrintText("It was good to have you around!", screen, 4, 0)
+            screen.refresh()
+            time.sleep(2)
+            break
+        # END EXIT this program#
+
     curses.endwin()
 
 def WriteGame(GAME, screen):
@@ -527,13 +541,11 @@ def RemoveItem(GAME, screen):
 def SaveStory(GAME, screen):
         screen.clear()
         header = "Adventure Squirrel"
-        question = "What will be the name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")"
-        while True:
-            filename = Ask(header, question, screen) 
-            if filename.endswith(".pickle"):
-                break
-            else:
-                question = "The file must be a pickle file."
+        question = "What will be the name of the file that contains the game information?"
+       
+        # Asks for file name and appends ".pickle" 
+        filename = Ask(header, question, screen) 
+        filename += ".pickle"
 
         with open(filename,'wb') as f:
             pickle.dump(GAME, f)
