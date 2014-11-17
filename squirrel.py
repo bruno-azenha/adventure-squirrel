@@ -417,7 +417,25 @@ def AddItem(GAME, screen):
             isDroppable = False
 
         newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
-        GAME.items.append(newItem)
+        
+        # which room does it belong to?
+        screen.clear()
+        question = "Which room does this item belong to?"
+        screen = PrintHeader(header, screen, 0, 0)
+        screen = PrintText(question, screen, 4, 0)
+        
+        RoomMenu = [(r.name) for r in GAME.rooms]
+        RoomMenu.append("None")
+        roomselected = ShowMenu(RoomMenu, screen, 6, 0)
+    
+        # if it belongs to no room, we simply append it to the item list
+        if roomselected[0] == "None":
+            GAME.items.append(newItem)
+        # if it belongs to a specific room, then we set the location attribute of this item
+        else:
+            # roomselected[1] is actual room index in GAME.rooms
+            newItem.PlaceAt(roomselected[1])
+            GAME.items.append(newItem)
         
          
 
