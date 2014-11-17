@@ -26,7 +26,9 @@ MENU_EDIT_GAME = ["CHANGE NAME", "WRITE HELP", "WRITE CREDITS", "BACK"]
 
 MENU_ROOMS = ["ADD Room", "EDIT Room", "REMOVE Room", "BACK"]
 
-MENU_EDIT_ROOM = ["NAME", "DESCRIPTION", "CONNECTIONS", "BACK"]
+MENU_ROOM_ITEM = ["ADD item to this Room", "REMOVE item from this Room", "BACK"]
+
+MENU_EDIT_ROOM = ["NAME", "DESCRIPTION", "CONNECTIONS", "ITEMS", "BACK"]
 
 MENU_ITEMS = ["ADD Item", "EDIT Item", "REMOVE Item", "BACK"]
 
@@ -35,7 +37,7 @@ MENU_EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
 
 MENU_CONFIRM = ["YES", "NO"]
 
-MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST"
+MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
              "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT", "-- BACK --"]
 
 
@@ -258,18 +260,36 @@ def EditRoom(GAME, screen):
                 header = room.name
                 name = "Name: " + room.name
                 description = "Description: " + room.description
-                 
-                screen = PrintHeader(header, screen, 0, 0)
-                screen = PrintText(name, screen, 4, 0)
-                screen = PrintText(description, screen, 5, 0)
-                screen = PrintText(str(GAME.rooms[roomselected[1]].connections), screen, 6, 0)
-                # WE NEED TO PRINT THE CONNECTIONS HERE
                 
-                # -----------------------
+                currentLine = 0 
+                screen = PrintHeader(header, screen, currentLine, 0)
+                screen = PrintText(name, screen, currentLine + 4, 0)
+                screen = PrintText(description, screen, currentLine + 5, 0)
+
+                screen = PrintText("Items:", screen, currentLine + 7, 0)
+                
+                itemNameList = []
+                currentLine = 8
+                for itemIndex in room.items:
+                    itemNameList.append(GAME.items[itemIndex].name)
+                    screen = PrintText(GAME.items[itemIndex].name, screen, currentLine, 0)
+                    currentLine += 1
+
+                currentLine += 1 
+                screen = PrintText("Connections:", screen, currentLine, 0)
+                currentLine += 1
+                connectionList = []
+                for i in range(len(MENU_DIRS)-1): # -1 because MENU_DIRS has -- BACK --
+                    if room.connections[i] < 0:
+                        connectionList.append(MENU_DIRS[i] + ": NONE")
+                    else:
+                        connectionList.append(MENU_DIRS[i] + ": " + GAME.rooms[room.connections[i]].name )
+                    screen = PrintText(connectionList[i], screen, currentLine, 0)
+                    currentLine += 1
 
                 question = "What would you like to change?"            
-                screen = PrintText(question, screen, 7, 0)
-                selection = ShowMenu(MENU_EDIT_ROOM, screen, 9, 0)
+                screen = PrintText(question, screen, currentLine + 1, 0)
+                selection = ShowMenu(MENU_EDIT_ROOM, screen, currentLine + 3, 0)
 
                 # EDIT NAME #
                 if selection[0] == MENU_EDIT_ROOM[0]:
@@ -285,7 +305,7 @@ def EditRoom(GAME, screen):
                     screen.clear()
                     question = "What is the new description of this room?"
                     description = AskWithConfirm(header, question, screen)
-                    GAME.rooms[roomselected[1]].description = description                    
+                    GAME.rooms[roomselected[1]].description = description
                 # END EDIT DESCRIPTION #
 
                 # EDIT CONNECTIONS #
@@ -294,10 +314,32 @@ def EditRoom(GAME, screen):
                     question = "Which direction do you want to edit?"
                     screen = PrintHeader(header, screen, 0, 0)
                     screen = PrintText(question, screen, 4, 0)
-                    selectedDirection = ShowMenu(MENU_DIRS, screen, 6, 0)
+                    selectedDirection = ShowMenu(connectionList, screen, 6, 0)
+                    if selectedDirection[0] == "-- BACK --":
+                        break
                     EditRoomConnection(GAME, screen, roomselected[1], selectedDirection[1])
                     
                 # END EDIT CONNECTIONS #
+
+                # EDIT ITEMS #
+                elif selection[0] == MENU_EDIT_ROOM[3]:
+                    while True:
+                        screen.clear()
+                        question = "What do you want to do?"
+                        screen = PrintHeader(header, screen, 0, 0)
+                        screen = PrintText(question, screen, 4, 0)
+                        selectedOption = ShowMenu(MENU_ROOM_ITEM, screen, 6, 0)
+                        
+                        if selectedOption[0] == "ADD item to this Room":
+                            AddItemToRoom(GAME, screen, roomselected[1])
+
+                        elif selectedOption[0] == "REMOVE item from this Room":
+                            RemoveItemFromRoom(GAME, screen, roomselected[1])
+                    
+                        elif selectedOption[0] == "BACK":
+                            break
+
+                # END EDIT ITEMS #
 
                 elif selection[0] == "BACK":
                     break
@@ -381,45 +423,81 @@ def WriteItems(GAME, screen):
             break
         # END BACK #
 
+def AddItemToRoom(GAME, screen, roomIndex):
+    
+    # Gets a list with all items not yet placed
+    itemsIndexes = GAME.GetNotPlacedItems()
+
+    itemsMenu = []
+    for i in itemsIndexes:
+        itemsMenu.append(GAME.items[i].name)
+    itemsMenu.append("BACK")
+    
+    screen.clear()
+    screen = PrintHeader(GAME.rooms[roomIndex].name, screen, 0, 0)
+    question = "Select the item to ADD to this room"
+    screen = PrintText(question, screen, 4, 0)
+    itemselected = ShowMenu(itemsMenu, screen, 6, 0)
+
+    if itemselected[0] != "BACK":
+        GAME.PlaceItem(itemsIndexes[itemselected[1]], roomIndex)
+        
+                            
+def RemoveItemFromRoom(GAME, screen, roomIndex):
+    itemsIndexes = GAME.rooms[roomIndex].items
+
+    itemsMenu = []
+    for i in itemsIndexes:
+        itemsMenu.append(GAME.items[i].name)
+    itemsMenu.append("BACK")
+
+    screen.clear()
+    screen = PrintHeader(GAME.rooms[roomIndex].name, screen, 0, 0)
+    question = "Select the item to REMOVE from this room"
+    screen = PrintText(question, screen, 4, 0)
+    itemselected = ShowMenu(itemsMenu, screen, 6, 0)
+
+    if itemselected[0] != "BACK":
+        GAME.UnplaceItem(itemsIndexes[itemselected[1]], roomIndex)
+
+
 def AddItem(GAME, screen):
 
-        # Ask for the name of the item
-        screen.clear()
-        header = GAME.name
-        question = "What is the name of this item?"
-        name = AskWithConfirm(header, question, screen)
+    # Ask for the name of the item
+    screen.clear()
+    header = GAME.name
+    question = "What is the name of this item?"
+    name = AskWithConfirm(header, question, screen)
 
-        # Ask for the description of the item
-        screen.clear()
-        header = name
-        question = "What is the description of this item?"
-        description = AskWithConfirm(header, question, screen)
+    # Ask for the description of the item
+    screen.clear()
+    header = name
+    question = "What is the description of this item?"
+    description = AskWithConfirm(header, question, screen)
 
-        # Pickable?
+    # Pickable?
+    screen.clear()
+    question = "Can the user pick this item up?";
+    screen = PrintHeader(header, screen, 0, 0)
+    screen = PrintText(question, screen, 4, 0)
+    if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
+        isPickable = True
+
+        # Droppable? 
         screen.clear()
-        question = "Can the user pick this item up?";
+        question = "Can the user drop this item from his inventory?";
         screen = PrintHeader(header, screen, 0, 0)
         screen = PrintText(question, screen, 4, 0)
         if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
-            isPickable = True
- 
-            # Droppable? 
-            screen.clear()
-            question = "Can the user drop this item from his inventory?";
-            screen = PrintHeader(header, screen, 0, 0)
-            screen = PrintText(question, screen, 4, 0)
-            if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
-                isDroppable = True
-            else: 
-                isDroppable = False
-        else:
-            isPickable = False
+            isDroppable = True
+        else: 
             isDroppable = False
+    else:
+        isPickable = False
+        isDroppable = False
 
-        newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
-        GAME.items.append(newItem)
-        
-         
+    newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
+    GAME.AddItem(newItem)
 
 def EditItem(GAME, screen):
         while True:

@@ -18,4 +18,5 @@ class Player(object):
     def AddToInventory(self, itemIndex):
         self.inventory.append(itemIndex)
 
-
+    def RemoveFromInventory(self, itemIndex):
+        self.inventory.remove(itemIndex)

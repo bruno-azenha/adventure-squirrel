@@ -33,6 +33,9 @@ class GameSquirrel():
                 item.location = None
         
         self.rooms.remove(self.rooms[room_index])
+    
+    def AddItem(self, item):
+        self.items.append(item)
 
     def PlaceItem(self, itemIndex, where):
         self.items[itemIndex].PlaceAt(where)
@@ -40,7 +43,23 @@ class GameSquirrel():
             self.player.AddToInventory(itemIndex)
         elif where >= 0: # IN A ROOM
             self.rooms[where].AddItem(itemIndex)
-            
-  
+          
+    def UnplaceItem(self, itemIndex, where):
+        self.items[itemIndex].Unplace()
+        if where == -2: # PLAYER INVENTORY
+            self.player.RemoveFromInventory(itemIndex)
+        elif where >= 0: # IN A ROOM
+            self.rooms[where].RemoveItem(itemIndex)
+        
+ 
+    # Returns a list with the indexes of the not placed items
+    def GetNotPlacedItems(self):
+        unplacedList = []
+        for i in range(len(self.items)):
+            if self.items[i].whereIs == -1:
+                unplacedList.append(i)
+        return unplacedList
+        
+        
     def removeItem(self):
         print("NOT YET IMPLEMENTED")

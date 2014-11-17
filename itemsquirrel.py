@@ -22,3 +22,6 @@ class ItemSquirrel():
 
     def PlaceAt(self, place):
         self.whereIs = place
+
+    def Unplace(self):
+        self.whereIs = -1
