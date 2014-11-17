@@ -42,5 +42,12 @@ class GameSquirrel():
             self.rooms[where].AddItem(itemIndex)
             
   
-    def removeItem(self):
-        print("NOT YET IMPLEMENTED")
+    def removeItem(self, itemIndex):
+        # possibly don't need this function
+
+        # remove it from the room
+        room_index = self.items[itemIndex].whereIs
+        self.rooms[room_index].RemoveItem(itemIndex)
+
+        # remove it from the game
+        del self.items[itemIndex]
