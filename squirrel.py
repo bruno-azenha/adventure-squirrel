@@ -40,7 +40,6 @@ MENU_CONFIRM = ["YES", "NO"]
 MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
              "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT", "-- BACK --"]
 
-
 def main(screen):
 
     # Initialize curses
@@ -77,7 +76,7 @@ def main(screen):
         elif selection[0] == MENU_TOP[1]:
             screen.clear()
            
-            question = "What is name of the pickle file that contains the game information? (e.g. \"Game_Info.pickle\")"
+            question = "What is name of the pickle file that contains the game information?"
             # Ask for the name of the pickle file
             while True:
                 filename = Ask(header, question, screen)
@@ -266,8 +265,8 @@ def EditRoom(GAME, screen):
                 screen = PrintText(name, screen, currentLine + 4, 0)
                 screen = PrintText(description, screen, currentLine + 5, 0)
 
+                # Print items in the room
                 screen = PrintText("Items:", screen, currentLine + 7, 0)
-                
                 itemNameList = []
                 currentLine = 8
                 for itemIndex in room.items:
@@ -276,6 +275,8 @@ def EditRoom(GAME, screen):
                     currentLine += 1
 
                 currentLine += 1 
+
+                # Print connections of the room
                 screen = PrintText("Connections:", screen, currentLine, 0)
                 currentLine += 1
                 connectionList = []
@@ -286,6 +287,7 @@ def EditRoom(GAME, screen):
                         connectionList.append(MENU_DIRS[i] + ": " + GAME.rooms[room.connections[i]].name )
                     screen = PrintText(connectionList[i], screen, currentLine, 0)
                     currentLine += 1
+
 
                 question = "What would you like to change?"            
                 screen = PrintText(question, screen, currentLine + 1, 0)
@@ -391,10 +393,13 @@ def RemoveRoom(GAME, screen):
             
             header = GAME.name
             question = "Are you sure you want to REMOVE " + selection[0] + "?"
+            question += "\nNotice: All the items in this room will be placed at NOWHERE."
             screen = PrintHeader(header, screen, 0, 0)
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
-                del GAME.rooms[selection[1]]
+                
+                # remove the room from the game class
+                GAME.removeRoom(selection[1])
   
 def WriteItems(GAME, screen):
     while True:    
@@ -501,7 +506,31 @@ def AddItem(GAME, screen):
         isDroppable = False
 
     newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
-    GAME.AddItem(newItem)
+    
+    # which room does it belong to?
+    screen.clear()
+    question = "What is the initial placement of this item??"
+    screen = PrintHeader(header, screen, 0, 0)
+    screen = PrintText(question, screen, 4, 0)
+    
+    RoomMenu = [(r.name) for r in GAME.rooms]
+    RoomMenu.append("Player Inventory")
+    RoomMenu.append("None")
+    roomselected = ShowMenu(RoomMenu, screen, 6, 0)
+
+    # if it belongs to no room, we simply append it to the item list
+    if roomselected[0] == "None":
+        GAME.AddItem(newItem)
+
+    elif roomselected[0] == "Player Inventory":
+        GAME.AddItem(newItem)
+        GAME.PlaceItem(GAME.item[-1], -2)
+
+    # if it belongs to a specific room, then we set the location attribute of this item
+    else:
+        # roomselected[1] is actual room index in GAME.rooms
+        GAME.AddItem(newItem)
+        GAME.PlaceItem(len(GAME.items)-1, roomselected[1])
 
 def EditItem(GAME, screen):
         while True:
@@ -649,7 +678,8 @@ def RemoveItem(GAME, screen):
             screen = PrintHeader(header, screen, 0, 0)
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
-                del GAME.items[selection[1]]
+                
+                GAME.RemoveItem(selection[1])
     
 # Save pickle Story File
 def SaveStory(GAME, screen):

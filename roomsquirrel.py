@@ -35,6 +35,11 @@ class RoomSquirrel():
     def RemoveItem(self, item):
         self.items.remove(item)
 
+    # Method to remove an item to a room
+    # item is an index to the item in GAME.items  list
+    def RemoveItem(self, item):
+        self.items.remove(item)    
+
     #def remove_self(self):
         #for room in RoomSquirrel.instances:
         #    if self in room.dictOfConnections.values():

@@ -28,15 +28,20 @@ class GameSquirrel():
                 for ind in indicies:
                     r.connections[ind] = -1
         
-        for item in self.items: #remove item info from room
-            if room_index == item.location:
-                item.location = None
+        for i in range(len(self.items)): #remove item info from room
+            if room_index == self.items[i].whereIs:
+                self.items[i].whereIs = -1
         
-        self.rooms.remove(self.rooms[room_index])
-    
+        del self.rooms[room_index]
+
+        # update the room index in all the items
+        for j in range(len(self.items)):
+            if self.items[j].whereIs > room_index:
+                self.items[j].whereIs -= 1
+
     def AddItem(self, item):
         self.items.append(item)
-
+    
     def PlaceItem(self, itemIndex, where):
         self.items[itemIndex].PlaceAt(where)
         if where == -2: # PLAYER INVENTORY
@@ -60,6 +65,28 @@ class GameSquirrel():
                 unplacedList.append(i)
         return unplacedList
         
+    def RemoveItem(self, itemIndex):
+        # possibly don't need this function
+
+        # remove it from the room and inventory
+        # then we adjust the other item index in the rooms
+        # -->decrement item index by 1 
+        room_index = self.items[itemIndex].whereIs
         
-    def removeItem(self):
-        print("NOT YET IMPLEMENTED")
+        if room_index == -1:
+            del self.items[itemIndex]
+
+        elif room_index == -2:
+            self.player.RemoveInventory(itemIndex)
+            for i in range(len(self.player.RemoveInventory)):
+                if self.player.RemoveInventory[i] > itemIndex:
+                    self.player.RemoveInventory[i] -= 1
+            del self.items[itemIndex]
+
+        elif room_index >= 0:
+            self.rooms[room_index].RemoveItem(itemIndex)
+            for j in range(len(self.rooms)):
+                for k in range(len(self.rooms[j].items)):
+                    if self.rooms[j].items[k] > itemIndex:
+                        self.rooms[j].items[k] -= 1
+            del self.items[itemIndex]
