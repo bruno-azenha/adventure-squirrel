@@ -354,12 +354,8 @@ def RemoveRoom(GAME, screen):
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
                 
-                # change the whereIs attribute of the items in this room to -1
-                for i in GAME.items:
-                    if i.whereIs == selection[1]:
-                        i.whereIs = -1
-
-                del GAME.rooms[selection[1]]
+                # remove the room from the game class
+                GAME.removeRoom(selection[1])
   
 def WriteItems(GAME, screen):
     while True:    
@@ -447,6 +443,7 @@ def AddItem(GAME, screen):
             # roomselected[1] is actual room index in GAME.rooms
             newItem.PlaceAt(roomselected[1])
             GAME.items.append(newItem)
+            GAME.rooms[roomselected[1]].AddItem(len(GAME.items)-1)
         
          
 
@@ -597,11 +594,7 @@ def RemoveItem(GAME, screen):
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
                 
-                # remove this item from the room
-                room_index = GAME.items[selection[1]].whereIs
-                GAME.rooms[room_index].RemoveItem(selection[1])
-
-                del GAME.items[selection[1]]
+                GAME.RemoveItem(selection[1])
     
 # Save pickle Story File
 def SaveStory(GAME, screen):
