@@ -281,7 +281,7 @@ def EditRoom(GAME, screen):
                 connectionList = []
                 for i in range(len(MENU_DIRS)-1): # -1 because MENU_DIRS has -- BACK --
                     if room.connections[i] < 0:
-                        connectionList.append(MENU_DIRS[i] + ": NONE")
+                        connectionList.append(MENU_DIRS[i] + ":")
                     else:
                         connectionList.append(MENU_DIRS[i] + ": " + GAME.rooms[room.connections[i]].name )
                     screen = PrintText(connectionList[i], screen, currentLine, 0)
@@ -314,10 +314,14 @@ def EditRoom(GAME, screen):
                     question = "Which direction do you want to edit?"
                     screen = PrintHeader(header, screen, 0, 0)
                     screen = PrintText(question, screen, 4, 0)
-                    selectedDirection = ShowMenu(connectionList, screen, 6, 0)
+                    
+                    connectionEditList = connectionList
+                    connectionEditList.append("-- BACK --")
+                    selectedDirection = ShowMenu(connectionEditList, screen, 6, 0)
                     if selectedDirection[0] == "-- BACK --":
-                        break
-                    EditRoomConnection(GAME, screen, roomselected[1], selectedDirection[1])
+                        continue
+                    else:
+                        EditRoomConnection(GAME, screen, roomselected[1], selectedDirection[1])
                     
                 # END EDIT CONNECTIONS #
 
