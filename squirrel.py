@@ -31,7 +31,7 @@ MENU_EDIT_ROOM = ["NAME", "DESCRIPTION", "CONNECTIONS", "BACK"]
 MENU_ITEMS = ["ADD Item", "EDIT Item", "REMOVE Item", "BACK"]
 
 MENU_EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
-             "AVAILABLE ACTIONS", "BACK"]
+             "PLACE ITEM", "BACK"]
 
 MENU_CONFIRM = ["YES", "NO"]
 
@@ -432,51 +432,58 @@ def EditItem(GAME, screen):
             
             ItemMenu = [(i.name) for i in GAME.items]
             ItemMenu.append("BACK")
-            itemselection = ShowMenu(ItemMenu, screen, 6, 0)
+            itemselected = ShowMenu(ItemMenu, screen, 6, 0)
         
-            if itemselection[0] == "BACK":
+            if itemselected[0] == "BACK":
                 break
 
             else:
             
                 while True:
                     screen.clear()
-                    item = GAME.items[itemselection[1]]
+                    item = GAME.items[itemselected[1]]
                     header = item.name
                     name = "Name: " + item.name
                     description = "Description: " + item.description
                     pickable = "Is Pickable: " + str(item.isPickable)
                     droppable = "Is Droppable: " + str(item.isDroppable)
-                     
+                    if item.whereIs == -1:
+                        place = "Place: NOT SET"
+                    elif item.whereIs == -2:
+                        place = "Place: PLAYER INVENTORY"
+                    else:
+                        place = "Place: " + GAME.rooms[item.whereIs].name
+
                     screen = PrintHeader(header, screen, 0, 0)
                     screen = PrintText(name, screen, 4, 0)
                     screen = PrintText(description, screen, 5, 0)
                     screen = PrintText(pickable, screen, 6, 0)
                     screen = PrintText(droppable, screen, 7, 0)
+                    screen = PrintText(place, screen, 8, 0)
                     question = "What would you like to change??"            
-                    screen = PrintText(question, screen, 9, 0)
+                    screen = PrintText(question, screen, 10, 0) 
                     
-                    selection = ShowMenu(MENU_EDIT_ITEM, screen, 11, 0)
+                    selected = ShowMenu(MENU_EDIT_ITEM, screen, 12, 0)
 
                     # EDIT NAME #
-                    if selection[0] == MENU_EDIT_ITEM[0]:
+                    if selected[0] == MENU_EDIT_ITEM[0]:
                         screen.clear()
                         question = "What is the new name of this item?"
                         name = AskWithConfirm(header, question, screen)
-                        GAME.items[itemselection[1]].name = name
+                        GAME.items[itemselected[1]].name = name
                         header = name                
                     # END EDIT NAME #
 
                     # EDIT DESCRIPTION #
-                    elif selection[0] == MENU_EDIT_ITEM[1]:
+                    elif selected[0] == MENU_EDIT_ITEM[1]:
                         screen.clear()
                         question = "What is the new description of this item?"
                         description = AskWithConfirm(header, question, screen)
-                        GAME.items[itemselection[1]].description = description                    
+                        GAME.items[itemselected[1]].description = description                    
                     # END EDIT DESCRIPTION #
 
                     # INVENTORY BEHAVIOR #
-                    elif selection[0] == MENU_EDIT_ITEM[2]:
+                    elif selected[0] == MENU_EDIT_ITEM[2]:
                         # Pickable?
                         screen.clear()
                         question = "Can the user pick this item up?";
@@ -497,19 +504,44 @@ def EditItem(GAME, screen):
                         else:
                             isPickable = False
                             isDroppable = False
-                        GAME.items[itemselection[1]].isPickable = isPickable
-                        GAME.items[itemselection[1]].isDroppable = isDroppable
+                        GAME.items[itemselected[1]].isPickable = isPickable
+                        GAME.items[itemselected[1]].isDroppable = isDroppable
                             
                     # END INVENTORY BEHAVIOR #
-           
-                    # AVAILABLE ACTIONS # 
-                    elif selection[0] == MENU_EDIT_ITEM[3]:
-                        print("NOT YET IMPLEMENTED")
-                    # END AVAILABLE ACTIONS
 
-                    elif selection[0] == MENU_EDIT_ITEM[4]:
+                    # PLACE ITEM #
+                    elif selected[0] == MENU_EDIT_ITEM[3]:
+                        # Select room in which to place item
+                        screen.clear()
+                        question = "Where would you like to put this item?"
+                        screen = PrintHeader(header, screen, 0, 0)
+                        screen = PrintText(question, screen, 4, 0)
+                        
+                        RoomMenu = [(r.name) for r in GAME.rooms]
+                        if item.isPickable == True:
+                            RoomMenu.append("PLAYER INVENTORY")
+                        RoomMenu.append("NOWHERE")
+                        RoomMenu.append("BACK")
+                        roomselected = ShowMenu(RoomMenu, screen, 6, 0)
+                   
+                        if roomselected[0] == "BACK":
+                            break
+
+                        elif roomselected[0] == "PLAYER INVENTORY":
+                            # HERE I'M USING -2 TO MARK PLAYER INVENTORY
+                            GAME.PlaceItem(itemselected[1], -2)
+                   
+                        elif roomselected[0] == "NOWHERE":
+                            GAME.PlaceItem(itemselected[1], -1)
+                        else:
+                            GAME.PlaceItem(itemselected[1], roomselected[1])
+                            
+                    # END PLACE ITEM #
+          
+                    # Exit menu 
+                    elif selected[0] == "BACK":
                         break
-            
+
 def RemoveItem(GAME, screen):
     while True:
         screen.clear()

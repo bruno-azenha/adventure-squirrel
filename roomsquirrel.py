@@ -14,6 +14,7 @@ class RoomSquirrel():
         self.name = name
         self.description = description
         self.connections = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+        self.items = []
         #self.dictOfConnections = {d: None for d in DIRS}
     
     def __str__(self): #string representation
@@ -25,6 +26,11 @@ class RoomSquirrel():
         direction = DIRS[direction_number]
         self.connections[direction_number] = room_number
         #self.dictOfConnections[direction] = self.instances[room_number]
+
+    # Method to add an item to a room
+    # item is an index to the item in GAME.items  list
+    def AddItem(self, item):
+        self.items.append(item)
 
     #def remove_self(self):
         #for room in RoomSquirrel.instances:

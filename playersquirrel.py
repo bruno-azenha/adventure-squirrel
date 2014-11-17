@@ -15,4 +15,7 @@ class Player(object):
     		self.score, self.moves,
     		self.inventory, self.available_actions)
 
+    def AddToInventory(self, itemIndex):
+        self.inventory.append(itemIndex)
+
 

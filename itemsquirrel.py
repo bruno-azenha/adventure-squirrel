@@ -7,6 +7,8 @@ class ItemSquirrel():
         self.description = desc
         self.isPickable = pick
         self.isDroppable = drop
+        self.whereIs = -1 # At the moment of creation, an item isn't anywhere
+                          # Later this will be a room index at GAME.rooms list
 
     def setName(self, name):
         self.name = name
@@ -17,3 +19,6 @@ class ItemSquirrel():
     def setInventory(self, isPickable, isDroppable):
         self.isPickable = isPickable
         self.isDroppable = isDroppable
+
+    def PlaceAt(self, place):
+        self.whereIs = place
