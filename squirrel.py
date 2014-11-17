@@ -535,7 +535,7 @@ def AddItem(GAME, screen, fromRoomFlag):
 
         elif roomselected[0] == "Player Inventory":
             GAME.AddItem(newItem)
-            GAME.PlaceItem(GAME.item[-1], -2)
+            GAME.PlaceItem(len(GAME.items)-1, -2)
 
         # if it belongs to a specific room, then we set the location attribute of this item
         else:
