@@ -345,9 +345,16 @@ def RemoveRoom(GAME, screen):
             
             header = GAME.name
             question = "Are you sure you want to REMOVE " + selection[0] + "?"
+            question += "\nNotice: All the items in this room will be placed at NOWHERE."
             screen = PrintHeader(header, screen, 0, 0)
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
+                
+                # change the whereIs attribute of the items in this room to -1
+                for i in GAME.items:
+                    if i.whereIs == selection[1]:
+                        i.whereIs = -1
+
                 del GAME.rooms[selection[1]]
   
 def WriteItems(GAME, screen):
