@@ -258,18 +258,22 @@ def EditRoom(GAME, screen):
                 header = room.name
                 name = "Name: " + room.name
                 description = "Description: " + room.description
+                items_in_room = "Items in Room: "
+                for item_index_in_room in room.items:
+                    items_in_room += str(GAME.items[item_index_in_room].name) + ", "
                  
                 screen = PrintHeader(header, screen, 0, 0)
                 screen = PrintText(name, screen, 4, 0)
                 screen = PrintText(description, screen, 5, 0)
-                screen = PrintText(str(GAME.rooms[roomselected[1]].connections), screen, 6, 0)
+                screen = PrintText(items_in_room, screen, 6, 0)
+                screen = PrintText(str(GAME.rooms[roomselected[1]].connections), screen, 7, 0)
                 # WE NEED TO PRINT THE CONNECTIONS HERE
                 
                 # -----------------------
 
                 question = "What would you like to change?"            
-                screen = PrintText(question, screen, 7, 0)
-                selection = ShowMenu(MENU_EDIT_ROOM, screen, 9, 0)
+                screen = PrintText(question, screen, 8, 0)
+                selection = ShowMenu(MENU_EDIT_ROOM, screen, 10, 0)
 
                 # EDIT NAME #
                 if selection[0] == MENU_EDIT_ROOM[0]:
@@ -592,6 +596,11 @@ def RemoveItem(GAME, screen):
             screen = PrintHeader(header, screen, 0, 0)
             screen = PrintText(question, screen, 4, 0)
             if ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
+                
+                # remove this item from the room
+                room_index = GAME.items[selection[1]].whereIs
+                GAME.rooms[room_index].RemoveItem(selection[1])
+
                 del GAME.items[selection[1]]
     
 # Save pickle Story File
