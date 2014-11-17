@@ -15,6 +15,9 @@ import useful
 import gamesquirrel
 import roomsquirrel
 import itemsquirrel
+import playersquirrel
+import actionsquirrel
+
 
 MENU_TOP = ["CREATE a new game", "EDIT a saved game", 
             "EXIT this program"]
@@ -341,7 +344,7 @@ def EditRoom(GAME, screen):
 
                         elif selectedOption[0] == "REMOVE item from this Room":
                             RemoveItemFromRoom(GAME, screen, roomselected[1])
-                    
+                   
                         elif selectedOption[0] == "BACK":
                             break
 
@@ -414,7 +417,7 @@ def WriteItems(GAME, screen):
     
         # ADD ITEM #
         if selection[0] == MENU_ITEMS[0]:
-            AddItem(GAME, screen)
+            AddItem(GAME, screen, 0)
         # END ADD ITEM #
 
         # EDIT ITEM #
@@ -440,6 +443,7 @@ def AddItemToRoom(GAME, screen, roomIndex):
     itemsMenu = []
     for i in itemsIndexes:
         itemsMenu.append(GAME.items[i].name)
+    itemsMenu.append("NEW ITEM")
     itemsMenu.append("BACK")
     
     screen.clear()
@@ -448,9 +452,15 @@ def AddItemToRoom(GAME, screen, roomIndex):
     screen = PrintText(question, screen, 4, 0)
     itemselected = ShowMenu(itemsMenu, screen, 6, 0)
 
-    if itemselected[0] != "BACK":
+    if itemselected[0] == "BACK":
+        return 0
+
+    if itemselected[0] == "NEW ITEM":
+        AddItem(GAME, screen, 1)
+        GAME.PlaceItem(len(GAME.items)-1, roomIndex)
+       
+    else:  
         GAME.PlaceItem(itemsIndexes[itemselected[1]], roomIndex)
-        
                             
 def RemoveItemFromRoom(GAME, screen, roomIndex):
     itemsIndexes = GAME.rooms[roomIndex].items
@@ -470,7 +480,7 @@ def RemoveItemFromRoom(GAME, screen, roomIndex):
         GAME.UnplaceItem(itemsIndexes[itemselected[1]], roomIndex)
 
 
-def AddItem(GAME, screen):
+def AddItem(GAME, screen, fromRoomFlag):
 
     # Ask for the name of the item
     screen.clear()
@@ -507,30 +517,34 @@ def AddItem(GAME, screen):
 
     newItem = itemsquirrel.ItemSquirrel(name, description, isPickable, isDroppable)
     
-    # which room does it belong to?
-    screen.clear()
-    question = "What is the initial placement of this item??"
-    screen = PrintHeader(header, screen, 0, 0)
-    screen = PrintText(question, screen, 4, 0)
+    if fromRoomFlag == 0:
+        # which room does it belong to?
+        screen.clear()
+        question = "What is the initial placement of this item??"
+        screen = PrintHeader(header, screen, 0, 0)
+        screen = PrintText(question, screen, 4, 0)
+        
+        RoomMenu = [(r.name) for r in GAME.rooms]
+        RoomMenu.append("Player Inventory")
+        RoomMenu.append("None")
+        roomselected = ShowMenu(RoomMenu, screen, 6, 0)
+
+        # if it belongs to no room, we simply append it to the item list
+        if roomselected[0] == "None":
+            GAME.AddItem(newItem)
+
+        elif roomselected[0] == "Player Inventory":
+            GAME.AddItem(newItem)
+            GAME.PlaceItem(GAME.item[-1], -2)
+
+        # if it belongs to a specific room, then we set the location attribute of this item
+        else:
+            # roomselected[1] is actual room index in GAME.rooms
+            GAME.AddItem(newItem)
+            GAME.PlaceItem(len(GAME.items)-1, roomselected[1])
     
-    RoomMenu = [(r.name) for r in GAME.rooms]
-    RoomMenu.append("Player Inventory")
-    RoomMenu.append("None")
-    roomselected = ShowMenu(RoomMenu, screen, 6, 0)
-
-    # if it belongs to no room, we simply append it to the item list
-    if roomselected[0] == "None":
-        GAME.AddItem(newItem)
-
-    elif roomselected[0] == "Player Inventory":
-        GAME.AddItem(newItem)
-        GAME.PlaceItem(GAME.item[-1], -2)
-
-    # if it belongs to a specific room, then we set the location attribute of this item
     else:
-        # roomselected[1] is actual room index in GAME.rooms
         GAME.AddItem(newItem)
-        GAME.PlaceItem(len(GAME.items)-1, roomselected[1])
 
 def EditItem(GAME, screen):
         while True:

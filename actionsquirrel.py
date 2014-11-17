@@ -22,8 +22,7 @@ class CustomAction:
         for fun in self.listOfFunctions:
             # This shouldn't run yet 
             fun(*listOfArguments[index])
-            index += 1
-        
+            index += 1    
 
 # ------------------------------------------------------- #
 # ----- The Following are all of our Default Action ----- #
@@ -41,11 +40,11 @@ def Pick(item, game):
 
 # Returns True if succeed, False otherwise 
 def Drop(item, game):
-    #print("NOT IMPLEMENTED")
 
     if (item.isDroppable):
         # Implement drop to room
-        game.player.inventory.remove(item)
+        game.player.inventory.remove(itemIndex)
+        game.items[itemIndex].whereIs = game.player.current_room
         return True
     else:
         return False
@@ -65,9 +64,8 @@ def Move(game, direction):
     # get the connection of the current room
     connections = current_room.connections
 
-    DIRS = ["North", "South", "East", "West",
-        "Northeast", "Northwest", "Southeast",
-        "Southwest", "Up", "Down", "In", "Out", "FINISHED"]
+    DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST"
+             "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT"]
 
     target_index = DIRS.index(direction)
 
@@ -86,11 +84,10 @@ def Inventory(game):
     return game.player.inventory
 
 # Returns help text as string
-def ShowHelp():
+def ShowHelp(game):
     # Implement help retrieval
-    print("NOT IMPLEMENTED")
-    text = "Help text."
-    return text
+    
+    return game.instruction
 
 # Save current state of the game
 # Returns True if succes, False otherwise
@@ -126,10 +123,12 @@ def LoadGame(game):
 
 # Combine two items to generate a third
 # Returns True if succes, False otherwise
-def CombineItems(item1, item2, item3):
+def CombineItems(game, item1_index, item2_index, item3_index):
     # Implement CombineItems
-    print("NOT IMPLEMENTED")
-    return True
+    game.items[item1_index].whereIs = -1 # disappear
+    game.items[item2_index].whereIs = -1 # disappear
+    game.items[item3_index].whereIs = -2 # the item 3 is created in inventory
+    return game.items[item3_index].description #optional
     
 # ---------------------------------- #
 # ----- End of Default Actions ----- #
@@ -157,35 +156,36 @@ def CombineItems(item1, item2, item3):
 # Moves the player to an adjacent room according to game map
 def RegularMove(game, roomIndex):  
     # Implement RegularMove
-    print("NOT IMPLEMENTED")
-
-# Moves the player to a room, independent of game map validity
-def SpecialMove(game, roomIndex):
-    # Implement SpecialMove
-    print("NOT IMPLEMENTED")
+    game.player.current_room = roomIndex
+    return True
 
 # Changes the Player's score
 def ChangeScore(game, scoreChange):
-    # Implement ChangeScore
-    print("NOT IMPLEMENTED")
+    game.player.score += scoreChange
+    return True
 
 # Oops we tried not to print anything in here, but...
 # Displays Text
 def DisplayText(game, text):
-    # Implement DisplayText
-    print("NOT IMPLEMENTED")
+    return text
 
 # Add Item to player inventory
 def AddItemToInventory(game, item):
-    # Implement AddItemToInventory
-    print("NOT IMPLEMENTED")
+    game.player.inventory.append(item)
+    return True
 
 # Drop item
+def DropItem(game, itemIndex):
+    del game.items[itemIndex]
+    # update all the items index in room, inventory
 
 # Drop all items
+def DropAll(game):
+    for i in range(len(game.items)):
+        game.items[i].whereIs = game.player.current_room
+    return True
 
 # Win the Game
-
-# 
-#
-#
+# need to figure out with our game engine
+def Winning(game):
+    return True
