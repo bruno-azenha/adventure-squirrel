@@ -43,6 +43,19 @@ class GameSquirrel():
         self.items.append(item)
     
     def PlaceItem(self, itemIndex, where):
+
+        # Index of the room where the item was previously on
+        previousroom = self.items[itemIndex].whereIs
+
+        # First we remove the item from it's previous position
+        if previousroom >= 0:
+            if itemIndex in self.rooms[previousroom].items:
+                 self.rooms[previousroom].RemoveItem(itemIndex)
+
+        # WE HAVEN'T CHECKED THIS ONE!!!!
+        elif previousroom == -2: # Of it was in the player inventory
+           self.player.RemoveFromInventory(itemIndex) 
+
         self.items[itemIndex].PlaceAt(where)
         if where == -2: # PLAYER INVENTORY
             self.player.AddToInventory(itemIndex)
