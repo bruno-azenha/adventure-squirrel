@@ -1,5 +1,6 @@
 #
 # main()
+#
 
 import curses
 import time
@@ -35,14 +36,19 @@ MENU_ACTIONS = ["ADD Custom Action", "EDIT Custom Action",
                 "REMOVE Custom Action", "BACK"]
 
 MENU_ACTION_FORMAT = ["<verb>", 
-                      "<verb> <item1>",
-                      "<verb> <item1> <preposition> <item2>"]
+                      "<verb> <item>",
+                      "<verb> <preposition> <item>",
+                      "<verb> <item> <preposition> <item>"]
 
 MENU_CONFIRM = ["YES", "NO"]
 
 MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
              "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT", "-- BACK --"]
 
+MENU_BUILDING_BLOCKS = ["Regular Move", "Change Score", "Display Text",
+                       "Add Item to Inventory", "Drop Item from Inventory", 
+                       "Remove Item from inventory",  
+                       "Add item to Room", "Remove Item From Room"]
 def main(screen):
 
     # Initialize curses
@@ -738,6 +744,11 @@ def WriteActions(GAME, screen):
             break
         # END BACK #
 
+MENU_BULDING_BLOCKS = ["Regular Move", "Change Score", "Display Text",
+                       "Add Item to Inventory", "Drop Item from Inventory", 
+                       "Remove Item from inventory",  
+                       "Add item to Room", "Remove Item From Room", ]
+
 def AddCustomAction(GAME, screen): 
 
     # Get the verb of the action
@@ -752,14 +763,34 @@ def AddCustomAction(GAME, screen):
     question = "What is the format of this action?"
     screen = useful.PrintHeader(header, screen, 0, 0)
     screen = useful.PrintText(question, screen, 4, 0)
-    selectedformat = useful.ShowMenu(MENU_ACTIONS_FORMAT, screen, 6, 0)
+    selectedformat = useful.ShowMenu(MENU_ACTION_FORMAT, screen, 6, 0)
 
     # <verb>
-    if selectedformat[0] == MENU_ACTIONS_FORMAT[0]:
+    if selectedformat[0] == MENU_ACTION_FORMAT[0]:
+        AddBehaviors(GAME, screen, verb)                
         
+    # <verb> <item>        
 
-    Room = roomsquirrel.RoomSquirrel(name, description)
-    GAME.rooms.append(Room)
-
+def AddBehaviors(GAME, screen, verb):
+    
+    (listOfFunctions, listOfArguments) = ([],[])
+    while True:
+        screen.clear()
+        header = GAME.name
+        question = "What behavior would you like to add to your action?"
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText(question, screen, 4, 0)
+        selectedblock = useful.ShowMenu(MENU_BUILDING_BLOCKS, screen, 6, 0)
+    
+        
+        # Asks if the user wants to add another behavior
+        screen.clear()
+        header = GAME.name
+        question = "Do you want to add another behavior?"
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText(question, screen, 4, 0)
+        if (useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "NO"):
+            break
+        
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
