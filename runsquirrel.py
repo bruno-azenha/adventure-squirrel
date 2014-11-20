@@ -47,6 +47,7 @@ def main(screen):
                 question2 = "The Story file '" + storyFile + "' was not found."
                 screen = useful.PrintHeader(header, screen, 0, 0)
                 screen = useful.PrintText(question2, screen, 4, 0)
+                screen.refresh()
                 time.sleep(2) 
             else: 
                 PlayGame(GAME, screen)
