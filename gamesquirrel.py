@@ -15,6 +15,7 @@ class GameSquirrel():
         self.credits = ""
         self.rooms = []
         self.items = []
+        self.customActions = []
         self.player = playersquirrel.Player()
         
     def EditConnection(self, fromRoom, toRoom, direction):
