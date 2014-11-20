@@ -8,6 +8,7 @@ class CustomAction:
 
     def __init__(self, verb):
         self.verb = verb
+        self.listOfItems = []
         self.listOfFunctions = []
         self.listOfArguments = []
 
@@ -19,10 +20,12 @@ class CustomAction:
         # passing as parameter the associated argument stored in
         # self.listOfArguments
         index = 0
+        r = []
         for fun in self.listOfFunctions:
             # This shouldn't run yet 
-            fun(*listOfArguments[index])
+            r.append(fun(*listOfArguments[index]))
             index += 1    
+        return r
 
 # ------------------------------------------------------- #
 # ----- The Following are all of our Default Action ----- #
@@ -172,6 +175,11 @@ def DisplayText(game, text):
 # Add Item to player inventory
 def AddItemToInventory(game, item):
     game.player.inventory.append(item)
+    return True
+
+# Remove Item from player inventory
+def RemoveItemFromInventory(game, item):
+    game.player.inventory.remove(item)
     return True
 
 # Drop item

@@ -32,9 +32,6 @@ class RoomSquirrel():
     def AddItem(self, item):
         self.items.append(item)
     
-    def RemoveItem(self, item):
-        self.items.remove(item)
-
     # Method to remove an item to a room
     # item is an index to the item in GAME.items  list
     def RemoveItem(self, item):
