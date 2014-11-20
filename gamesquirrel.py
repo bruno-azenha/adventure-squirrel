@@ -25,7 +25,7 @@ class GameSquirrel():
             if room_index in r.connections:
                 indices = [i for i,val in enumerate(r.connections)
                            if val==room_index]
-                for ind in indicies:
+                for ind in indices:
                     r.connections[ind] = -1
         
         for i in range(len(self.items)): #remove item info from room
