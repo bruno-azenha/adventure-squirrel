@@ -15,7 +15,7 @@ import actionsquirrel
 MENU_TOP = ["CREATE a new game", "EDIT a saved game", 
             "EXIT this program"]
 
-MENU_WRITE_GAME = ["GAME", "ROOMS", "ITEMS", "SAVE STORY FILE", 
+MENU_WRITE_GAME = ["GAME", "ROOMS", "ITEMS", "ACTIONS", "SAVE STORY FILE", 
                   "SAVE AND EXIT", "EXIT WITHOUT SAVING"]
 
 MENU_EDIT_GAME = ["CHANGE NAME", "WRITE HELP", "WRITE CREDITS", "BACK"]
@@ -29,7 +29,14 @@ MENU_EDIT_ROOM = ["NAME", "DESCRIPTION", "CONNECTIONS", "ITEMS", "BACK"]
 MENU_ITEMS = ["ADD Item", "EDIT Item", "REMOVE Item", "BACK"]
 
 MENU_EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
-             "PLACE ITEM", "BACK"]
+                  "PLACE ITEM", "BACK"]
+
+MENU_ACTIONS = ["ADD Custom Action", "EDIT Custom Action", 
+                "REMOVE Custom Action", "BACK"]
+
+MENU_ACTION_FORMAT = ["<verb>", 
+                      "<verb> <item1>",
+                      "<verb> <item1> <preposition> <item2>"]
 
 MENU_CONFIRM = ["YES", "NO"]
 
@@ -131,21 +138,26 @@ def WriteGame(GAME, screen):
             WriteItems(GAME, screen)
         # END ITEMS #
         
-        # SAVE STORY FILE #
+        # ACTIONS #
         if selection[0] == MENU_WRITE_GAME[3]:
+            WriteActions(GAME, screen)
+        # END ACTIONS # 
+        
+        # SAVE STORY FILE #
+        if selection[0] == MENU_WRITE_GAME[4]:
             useful.SaveStory(GAME, screen)
             time.sleep(2)
         # END SAVE STORY FILE #
 
         # SAVE AND EXIT #
-        if selection[0] == MENU_WRITE_GAME[4]:
+        if selection[0] == MENU_WRITE_GAME[5]:
             useful.SaveStory(GAME, screen)
             time.sleep(2)
             break
         # END SAVE AND EXIT #
 
         # EXIT WITHOUT SAVING #
-        if selection[0] == MENU_WRITE_GAME[5]:
+        if selection[0] == MENU_WRITE_GAME[6]:
             break
         # END EXIT WITHOUT SAVING #
 
@@ -227,7 +239,7 @@ def AddRoom(GAME, screen):
     # Get the description of the room
     screen.clear()
     header = name
-    question = "What is the description of this room?"
+    question = "What is the description of this room? ('Look' action)"
     description = useful.AskWithConfirm(header, question, screen)
 
     Room = roomsquirrel.RoomSquirrel(name, description)
@@ -486,7 +498,7 @@ def AddItem(GAME, screen, fromRoomFlag):
     # Ask for the description of the item
     screen.clear()
     header = name
-    question = "What is the description of this item?"
+    question = "What is the description of this item? ('Look' action)"
     description = useful.AskWithConfirm(header, question, screen)
 
     # Pickable?
@@ -690,6 +702,64 @@ def RemoveItem(GAME, screen):
                 
                 GAME.RemoveItem(selection[1])
     
+def WriteActions(GAME, screen):
+    while True:
+        screen.clear()
+
+        # ACTIONS MENU #
+        header = GAME.name
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText("What do you want to do?", screen, 4, 0)
+        selection = useful.ShowMenu(MENU_ACTIONS, screen, 6, 0)
+        # END ROOMS MENU #
+
+        # ADD CUSTOM ACTION #
+        if selection[0] == MENU_ACTIONS[0]:
+            AddCustomAction(GAME, screen)
+        # END ADD CUSTOM ACTION #
+
+        # ADD COMBINE ITEM ACTION #
+        if selection[0] == MENU_ACTIONS[1]:
+            AddCombineAction(GAME, screen)
+        # END ADD COMBINE ITEM ACTION #
+
+        # EDIT CUSTOM ACTION #
+        if selection[0] == MENU_ACTIONS[1]:
+            EditCustomAction(GAME, screen)
+        # END EDIT CUSTOM ACTION "
+        
+        # REMOVE CUSTOM ACTION #
+        if selection[0] == MENU_ACTIONS[2]:
+            RemoveCustomAction(GAME, screen)
+        # END REMOVE CUSTOM ACTION "
+
+        # BACK #
+        if selection[0] == MENU_ACTIONS[3]:
+            break
+        # END BACK #
+
+def AddCustomAction(GAME, screen): 
+
+    # Get the verb of the action
+    screen.clear()
+    header = GAME.name
+    question = "What is the verb associated with this action?"
+    verb = useful.AskWithConfirm(header, question, screen)
+
+    # Get the description of the room
+    screen.clear()
+    header = verb
+    question = "What is the format of this action?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    selectedformat = useful.ShowMenu(MENU_ACTIONS_FORMAT, screen, 6, 0)
+
+    # <verb>
+    if selectedformat[0] == MENU_ACTIONS_FORMAT[0]:
+        
+
+    Room = roomsquirrel.RoomSquirrel(name, description)
+    GAME.rooms.append(Room)
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
