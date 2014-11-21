@@ -3,6 +3,7 @@ import useful
 import playersquirrel
 import roomsquirrel
 import itemsquirrel
+import actionsquirrel
  
 
 # Master Class to store all the game information
@@ -18,6 +19,9 @@ class GameSquirrel():
         self.customActions = []
         self.player = playersquirrel.Player()
         
+    def AddCustomAction(self, customAction):
+        self.customActions.append(customAction)
+
     def EditConnection(self, fromRoom, toRoom, direction):
         self.rooms[fromRoom].edit_connection(direction, toRoom)
 
@@ -63,14 +67,15 @@ class GameSquirrel():
         elif where >= 0: # IN A ROOM
             self.rooms[where].AddItem(itemIndex)
           
-    def UnplaceItem(self, itemIndex, where):
-        self.items[itemIndex].Unplace()
-        if where == -2: # PLAYER INVENTORY
-            self.player.RemoveFromInventory(itemIndex)
-        elif where >= 0: # IN A ROOM
-            self.rooms[where].RemoveItem(itemIndex)
-        
- 
+    def UnplaceItem(self, itemIndex, where): 
+        # First check if the item is indeed positioned there
+        if self.items[itemIndex].whereIs == where:
+            self.items[itemIndex].Unplace()
+            if where == -2: # PLAYER INVENTORY
+                self.player.RemoveFromInventory(itemIndex)
+            elif where >= 0: # IN A ROOM
+                self.rooms[where].RemoveItem(itemIndex)
+
     # Returns a list with the indexes of the not placed items
     def GetNotPlacedItems(self):
         unplacedList = []
@@ -78,7 +83,15 @@ class GameSquirrel():
             if self.items[i].whereIs == -1:
                 unplacedList.append(i)
         return unplacedList
-        
+
+    # Returns a list with the indexes of the pickable items
+    def GetPickableItems(self):
+        pickableList = []
+        for i in range(len(self.items)):
+            if self.items[i].isPickable == True:
+                pickableList.append(i)
+        return pickableList
+
     def RemoveItem(self, itemIndex):
         # possibly don't need this function
 
@@ -104,3 +117,4 @@ class GameSquirrel():
                     if self.rooms[j].items[k] > itemIndex:
                         self.rooms[j].items[k] -= 1
             del self.items[itemIndex]
+

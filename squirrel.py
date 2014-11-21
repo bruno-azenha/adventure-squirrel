@@ -2,6 +2,8 @@
 # main()
 #
 
+import pdb
+
 import curses
 import time
 
@@ -47,8 +49,8 @@ MENU_DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
 
 MENU_BUILDING_BLOCKS = ["Regular Move", "Change Score", "Display Text",
                        "Add Item to Inventory", "Drop Item from Inventory", 
-                       "Remove Item from inventory",  
-                       "Add item to Room", "Remove Item From Room"]
+                       "Remove Item from Inventory",  
+                       "Add Item to Room", "Remove Item From Room"]
 def main(screen):
 
     # Initialize curses
@@ -757,7 +759,7 @@ def AddCustomAction(GAME, screen):
     question = "What is the verb associated with this action?"
     verb = useful.AskWithConfirm(header, question, screen)
 
-    # Get the description of the room
+    # Get the format of the action
     screen.clear()
     header = verb
     question = "What is the format of this action?"
@@ -765,32 +767,270 @@ def AddCustomAction(GAME, screen):
     screen = useful.PrintText(question, screen, 4, 0)
     selectedformat = useful.ShowMenu(MENU_ACTION_FORMAT, screen, 6, 0)
 
+    # To which room is this action bound?
+    screen.clear()
+    header = verb
+    question = "To which room is this action bound?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    roomMenu = [(r.name) for r in GAME.rooms]
+    roomMenu.append("NOT ROOM BOUND")
+    roomselected = useful.ShowMenu(roomMenu, screen, 6, 0)
+    
+    if roomselected[0] == "NOT ROOM BOUND":
+        roomBound = False
+    else:
+        roomBound = roomselected[1]
+
+    # To which item is this action bound?
+    screen.clear()
+    header = verb
+    question = "To which item is this action bound?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    pickableItems = GAME.GetPickableItems()
+    itemMenu = []
+    for item in pickableItems:
+        itemMenu.append(GAME.items[item].name) 
+    itemMenu.append("NOT ITEM BOUND")
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+    
+    if itemselected[0] == "NOT ITEM BOUND":
+        itemBound = False
+    else:
+        itemBound = pickableItems[itemselected[1]]
+
     # <verb>
     if selectedformat[0] == MENU_ACTION_FORMAT[0]:
-        AddBehaviors(GAME, screen, verb)                
+        listFuns, listArgs = ChooseBehaviors(GAME, screen, verb)                
         
     # <verb> <item>        
 
-def AddBehaviors(GAME, screen, verb):
+    customAction = actionsquirrel.CustomAction(verb, roomBound, itemBound, 
+                                               listFuns, listArgs, )
+
+def ChooseBehaviors(GAME, screen, verb):
     
-    (listOfFunctions, listOfArguments) = ([],[])
+    listOfFunctions = []
+    listOfArguments = []
     while True:
         screen.clear()
-        header = GAME.name
+        header = verb
         question = "What behavior would you like to add to your action?"
         screen = useful.PrintHeader(header, screen, 0, 0)
         screen = useful.PrintText(question, screen, 4, 0)
         selectedblock = useful.ShowMenu(MENU_BUILDING_BLOCKS, screen, 6, 0)
+
+        if selectedblock[0] == "Regular Move":
+            fun, arg = AddBlockRegMove(GAME, screen, verb)    
+        
+        elif selectedblock[0] == "Change Score":
+            fun, arg = AddBlockChangeScore(GAME, screen, verb)
+
+        elif selectedblock[0] == "Display Text":
+            fun, arg = AddBlockDisplayText(GAME, screen, verb)
+        
+        elif selectedblock[0] == "Add Item to Inventory":
+            fun, arg = AddBlockAddItemToInv(GAME, screen, verb)
+        
+        elif selectedblock[0] == "Drop Item from Inventory":
+            fun, arg = AddBlockDropItemFromInv(GAME, screen, verb)
+
+        elif selectedblock[0] == "Remove Item from Inventory":
+            fun, arg = AddBlockRemoveItemFromInv(GAME, screen, verb)
+
+        elif selectedblock[0] == "Add Item to Room":
+            fun, arg = AddBlockAddItemToRoom(GAME, screen, verb)
+
+        else: # selectedblock[0] == "Remove Item from Room":
+            fun, arg = AddBlockRemoveItemFromRoom(GAME, screen, verb)
+        
+        if fun != False: 
+            listOfFunctions.append(fun)
+            listOfArguments.append(arg)
+
+            # Asks if the user wants to add another behavior
+            screen.clear()
+            header = GAME.name
+            question = "Do you want to add another behavior?"
+            screen = useful.PrintHeader(header, screen, 0, 0)
+            screen = useful.PrintText(question, screen, 4, 0)
+            if (useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "NO"):
+                break
+
+    return listOfFunctions, listOfArguments
+
+def AddBlockRegMove(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "Where does this action move the player to?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
     
-        
-        # Asks if the user wants to add another behavior
-        screen.clear()
-        header = GAME.name
-        question = "Do you want to add another behavior?"
-        screen = useful.PrintHeader(header, screen, 0, 0)
-        screen = useful.PrintText(question, screen, 4, 0)
-        if (useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "NO"):
+    RoomMenu = [(r.name) for r in GAME.rooms]
+    RoomMenu.append("BACK")
+    roomselected = useful.ShowMenu(RoomMenu, screen, 6, 0)
+
+    if roomselected[0] == "BACK":
+        return False, False
+    return actionsquirrel.RegularMove, roomselected[0]
+
+def AddBlockChangeScore(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "How many points does the player gain? (Only Digits)"
+    
+    while True:
+        points = useful.AskWithConfirm(header, question, screen)
+        if useful.IsOnlyDigits(points):
             break
+
+    return actionsquirrel.ChangeScore, int(points)  
         
+def AddBlockDisplayText(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "What text do you want to be displayed?"
+    
+    text = useful.AskWithConfirm(header, question, screen)
+
+    return actionsquirrel.DisplayText, text  
+
+def AddBlockAddItemToInv(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "Which item should be added to the player's inventory?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    pickableItemsIndexes = GAME.GetPickableItems()
+    itemMenu = []
+    for item in pickableItemsIndexes:
+        itemMenu.append(GAME.items[item].name)
+    itemMenu.append("BACK")
+
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+
+    if itemselected[0] == "BACK":
+        return False, False    
+    return actionsquirrel.AddItemToInventory, item  
+    
+def AddBlockDropItemFromInv(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "Which item should be dropped from the player's inventory?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    pickableItemsIndexes = GAME.GetPickableItems()
+    itemMenu = []
+    for item in pickableItemsIndexes:
+        itemMenu.append(GAME.items[item].name)
+    itemMenu.append("BACK")
+
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+    
+    if itemselected[0] == "BACK":
+        return False, False    
+    return actionsquirrel.DropItem, item  
+
+def AddBlockRemoveItemFromInv(GAME, screen, verb):
+    screen.clear()
+    header = verb
+    question = "Which item should be removed from the player's inventory?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    pickableItemsIndexes = GAME.GetPickableItems()
+    itemMenu = []
+    for item in pickableItemsIndexes:
+        itemMenu.append(GAME.items[item].name)
+    itemMenu.append("BACK")
+
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+    
+    if itemselected[0] == "BACK":
+        return False, False    
+    return actionsquirrel.RemoveItemFromInventory, item  
+
+def AddBlockAddItemToRoom(GAME, screen, verb):
+
+    # Which item?
+    screen.clear()
+    header = verb
+    question = "Which item should be added to a room?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    itemMenu = [(i.name) for i in GAME.items]
+    itemMenu.append("BACK")
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+    if itemselected[0] == "BACK":
+        return False, False    
+    
+    # Add to which room?
+    screen.clear()
+    header = verb
+    question = "To which room should " + itemselected[0] + " be added?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    roomMenu = [(r.name) for r in GAME.rooms]
+    roomMenu.append("BACK")
+    roomselected = useful.ShowMenu(roomMenu, screen, 6, 0)
+    if roomselected[0] == "BACK":
+        return False, False    
+    
+    return actionsquirrel.AddItemToRoom, [itemselected[1], roomselected[1]]  
+
+def AddBlockRemoveItemFromRoom(GAME, screen, verb):
+    # Which item?
+    screen.clear()
+    header = verb
+    question = "Which item should be removed from a room?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    itemMenu = [(i.name) for i in GAME.items]
+    itemMenu.append("BACK")
+    itemselected = useful.ShowMenu(itemMenu, screen, 6, 0)
+    if itemselected[0] == "BACK":
+        return False, False    
+    
+    # Add to which room?
+    screen.clear()
+    header = verb
+    question = "From which room should " + itemselected[0] + " be removed?"
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    screen = useful.PrintText(question, screen, 4, 0)
+    
+    roomMenu = [(r.name) for r in GAME.rooms]
+    roomMenu.append("BACK")
+    roomselected = useful.ShowMenu(roomMenu, screen, 6, 0)
+    if roomselected[0] == "BACK":
+        return False, False    
+    return actionsquirrel.RemoveItemFromRoom, [itemselected[1], roomselected[1]]  
+
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

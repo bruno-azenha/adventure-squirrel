@@ -6,8 +6,10 @@ import useful
 
 class CustomAction:
 
-    def __init__(self, verb):
+    def __init__(self, verb, roomBound, itemBound, functions, arguments):
         self.verb = verb
+        self.itemBound = False # This is either False or itemIndex
+        self.roomBound = False # This is either False or roomIndex
         self.listOfItems = []
         self.listOfFunctions = []
         self.listOfArguments = []
@@ -15,7 +17,17 @@ class CustomAction:
     # In order to create the custom actions, we merge together
     # different harcoded smaller actions to result on the desired
     # effect.
-    def execute(self):
+    def execute(self, roomIndex, playerInventory):
+
+        # First checks if the Bounds are fulfilled
+        if self.roomBound != False:
+            if self.roomBound != roomIndex:
+                return False
+
+        if self.itemBound != False:
+            if itemBound not in playerInventory:
+                return False
+
         # Executes each one of the functions in self.listOfFunction
         # passing as parameter the associated argument stored in
         # self.listOfArguments
@@ -193,7 +205,19 @@ def DropAll(game):
         game.items[i].whereIs = game.player.current_room
     return True
 
+# Add Item To a Room
+def AddItemToRoom(game, item, room):
+    game.PlaceItem(item, room) 
+    
+# Remove Item From a Room
+def RemoveItemFromRoom(game, item, room):
+    game.UnplaceItem(item, room)
+
 # Win the Game
 # need to figure out with our game engine
 def Winning(game):
+    return True
+
+# Lose Game
+def Lose(game):
     return True

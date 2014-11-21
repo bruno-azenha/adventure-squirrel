@@ -9,6 +9,7 @@
 # GetInput()
 # AskWithConfirm()
 # Ask(()
+# IsOnlyDigits()
 #-------------------#
 
 import readchar
@@ -255,3 +256,11 @@ def Ask(header, question, screen):
     screen = PrintText(question, screen, 4, 0) 
     userInput = GetInput(screen, 6, 0)
     return userInput
+
+# Verifies if a string is convertable to an integer
+def IsOnlyDigits(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
