@@ -39,10 +39,12 @@ class CustomAction:
 # Returns True if succeed, False otherwise 
 def Pick(itemIndex, game):
     
-
     if (game.items[itemIndex].isPickable):
         # Implement add to inventory
         game.player.inventory.append(itemIndex)
+        previous_room_index = game.items[itemIndex].whereIs
+        game.rooms[previous_room_index].RemoveItem(itemIndex)
+        game.items[itemIndex].whereIs = -2
         return True
     else: 
         return False
@@ -54,6 +56,7 @@ def Drop(itemIndex, game):
         # Implement drop to room
         game.player.inventory.remove(itemIndex)
         game.items[itemIndex].whereIs = game.player.current_room
+        game.rooms[game.player.current_room].items.append(itemIndex)
         return True
     else:
         return False
@@ -65,7 +68,7 @@ def Examine(itemIndex, game):
 # Returns the room's description and room's itemIndex
 def Look(roomIndex, game):
 
-    return (game.rooms[roomIndex].description, game.rooms[roomIndex].items)
+    return [game.rooms[roomIndex].description, game.rooms[roomIndex].items]
 
 # Returns True if movement is valid, False otherwise
 def Move(game, direction):
@@ -73,7 +76,7 @@ def Move(game, direction):
     # assume "direction" is a member of DIRS
 
     # find where is the player
-    current_room = game.player.current_room
+    current_room = game.rooms[game.player.current_room]
 
     # get the connection of the current room
     connections = current_room.connections
@@ -101,7 +104,7 @@ def Inventory(game):
 def ShowHelp(game):
     # Implement help retrieval
     
-    return game.instruction
+    return game.instructions
 
 # Save current state of the game
 # Returns True if succes, False otherwise
