@@ -11,6 +11,8 @@ import actionsquirrel
 
 MENU_TOP = ["Start Game", "Load Game", "Exit Game"]
 
+PREPOSITION = ["of", "on", "in", "under", "at", "over", "above"]
+
 def main(screen):
 
     # Checks for the rght number of command line arguments
@@ -82,14 +84,21 @@ def main(screen):
 
     curses.endwin()
 
+def defaultPrompt(header, screen):
+    screen.clear()
+    screen = useful.PrintHeader(header, screen, 0, 0) 
+    screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
+    screen = useful.PrintText(">> ", screen, 6, 0)
+
 def PlayGame(GAME, screen):
     header = GAME.name
     while True:
         screen = useful.PrintHeader(header, screen, 0, 0) 
         screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
-        screen = useful.PrintText(">> ", screen, 6, 0)   
+        screen = useful.PrintText(">> ", screen, 6, 0)
         
         command = useful.GetInput(screen, 6, 3)
+        defaultPrompt(header, screen)
         command = command.lower()
 
         if command == "quit":
@@ -115,7 +124,9 @@ def PlayGame(GAME, screen):
         # case <verb> <preposition> <item>
         elif len(command_list) == 3:
             # do something
-            print("NOT IMPLEMENTED")
+            # boolean type to indicate whether the action is successfully executed
+            result = handleActionFormat3(GAME, screen, command_list)
+            response(GAME, screen, command_list, result)
 
         # case <verb> <item> <preposition> <item>
         elif len(command_list) == 4:
@@ -177,12 +188,24 @@ def handleActionFormat1(GAME, screen, command_list):
         screen = useful.PrintText(inventory, screen, 8, 0)
         return True
 
-    for def_act in actionsquirrel.DEFAULT_ACTIONS:
-
-        if verb == def_act:
-            screen = useful.PrintText("Where(What) do you want to " + verb + "?", screen, 8, 0)
-            return None
-            break
+    elif verb is "look":
+        screen = useful.PrintText(actionsquirrel.Look(GAME.player.current_room, GAME), screen, 8,0)
+        return True
+    elif verb is "help":
+        screen = useful.PrintText(actionsquirrel.ShowHelp(GAME), screen, 8,0)
+        return True
+    elif verb is "save":
+        screen = useful.PrintText(actionsquirrel.SaveGame(GAME), screen, 8, 0)
+        return True
+    elif verb is "pick" or "take" or "examine" or "drop":
+        screen = useful.PrintText("Sorry you need to add an item to" + verb, screen, 8,0)
+        return False
+    elif verb is "move" or "go":
+        screen = useful.PrintText("Sorry, you need to add a direction", screen, 8, 0)
+        return False
+    elif verb is "combine":
+        screen = useful.PrintText("Sorry you need to add two items", screen, 8,0)
+        return False
 
     # else statement would not be executed if the for loop has been "break"
     # --> we cannot find the verb in default actions
@@ -257,11 +280,22 @@ def handleActionFormat2(GAME, screen, command_list):
         # we cannot find the action
         return False
 
+# handle the case <verb> <preposition> <item>
 def handleActionFormat3(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    preposition = command_list[1]
+    item = command_list[2]
 
+# handle the case <verb> <item> <preposition> <item>
 def handleActionFormat4(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    item1 = command_list[1]
+    preposition = command_list[2]
+    item2 = command_list[3]
+
+
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
