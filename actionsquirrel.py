@@ -1,4 +1,8 @@
 import useful
+
+DEFAULT_ACTIONS = ["pick", "drop", "examine", "look" , "move", 
+                "show help", "save game", "load game", "combine items"]
+
 #
 # Stories the information of each action and the 
 # suite of hardcoded functions for action effects
@@ -32,19 +36,20 @@ class CustomAction:
 # ------------------------------------------------------- #
 
 # Returns True if succeed, False otherwise 
-def Pick(item, game):
-    #print("NOT IMPLEMENTED")
-    if (item.isPickable):
+def Pick(itemIndex, game):
+    
+
+    if (game.items[itemIndex].isPickable):
         # Implement add to inventory
-        game.player.inventory.append(item)
+        game.player.inventory.append(itemIndex)
         return True
     else: 
         return False
 
 # Returns True if succeed, False otherwise 
-def Drop(item, game):
+def Drop(itemIndex, game):
 
-    if (item.isDroppable):
+    if (game.items[itemIndex].isDroppable):
         # Implement drop to room
         game.player.inventory.remove(itemIndex)
         game.items[itemIndex].whereIs = game.player.current_room
@@ -53,8 +58,13 @@ def Drop(item, game):
         return False
 
 # Returns item description as str
-def Examine(item):
-    return item.description
+def Examine(itemIndex, game):
+    return game.items[itemIndex].description
+
+# Returns the room's description and room's itemIndex
+def look(roomIndex, game):
+
+    return (game.rooms[roomIndex].description, game.rooms[roomIndex].items)
 
 # Returns True if movement is valid, False otherwise
 def Move(game, direction):
