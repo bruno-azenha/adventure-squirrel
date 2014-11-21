@@ -1,4 +1,8 @@
 import useful
+
+DEFAULT_ACTIONS = ["pick", "drop", "examine", "look" , "move", 
+                "help", "save", "combine"]
+
 #
 # Stories the information of each action and the 
 # suite of hardcoded functions for action effects
@@ -34,8 +38,9 @@ class CustomAction:
         index = 0
         r = []
         for fun in self.listOfFunctions:
-            # This shouldn't run yet 
-            r.append(fun(*listOfArguments[index]))
+            result = fun(*listOfArguments[index])
+            if result is not True or result is not False:
+                r.append(result)
             index += 1    
         return r
 
@@ -44,29 +49,38 @@ class CustomAction:
 # ------------------------------------------------------- #
 
 # Returns True if succeed, False otherwise 
-def Pick(item, game):
-    #print("NOT IMPLEMENTED")
-    if (item.isPickable):
+def Pick(itemIndex, game):
+    
+    if (game.items[itemIndex].isPickable):
         # Implement add to inventory
-        game.player.inventory.append(item)
+        game.player.inventory.append(itemIndex)
+        previous_room_index = game.items[itemIndex].whereIs
+        game.rooms[previous_room_index].RemoveItem(itemIndex)
+        game.items[itemIndex].whereIs = -2
         return True
     else: 
         return False
 
 # Returns True if succeed, False otherwise 
-def Drop(item, game):
+def Drop(itemIndex, game):
 
-    if (item.isDroppable):
+    if (game.items[itemIndex].isDroppable):
         # Implement drop to room
         game.player.inventory.remove(itemIndex)
         game.items[itemIndex].whereIs = game.player.current_room
+        game.rooms[game.player.current_room].items.append(itemIndex)
         return True
     else:
         return False
 
 # Returns item description as str
-def Examine(item):
-    return item.description
+def Examine(itemIndex, game):
+    return game.items[itemIndex].description
+
+# Returns the room's description and room's itemIndex
+def Look(roomIndex, game):
+
+    return [game.rooms[roomIndex].description, game.rooms[roomIndex].items]
 
 # Returns True if movement is valid, False otherwise
 def Move(game, direction):
@@ -74,7 +88,7 @@ def Move(game, direction):
     # assume "direction" is a member of DIRS
 
     # find where is the player
-    current_room = game.player.current_room
+    current_room = game.rooms[game.player.current_room]
 
     # get the connection of the current room
     connections = current_room.connections
@@ -102,7 +116,7 @@ def Inventory(game):
 def ShowHelp(game):
     # Implement help retrieval
     
-    return game.instruction
+    return game.instructions
 
 # Save current state of the game
 # Returns True if succes, False otherwise
@@ -197,7 +211,7 @@ def RemoveItemFromInventory(game, item):
 # Drop item
 def DropItem(game, itemIndex):
     del game.items[itemIndex]
-    # update all the items index in room, inventory
+    return True
 
 # Drop all items
 def DropAll(game):

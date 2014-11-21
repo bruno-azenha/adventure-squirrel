@@ -82,6 +82,12 @@ def main(screen):
 
     curses.endwin()
 
+def defaultPrompt(header, screen):
+    screen.clear()
+    screen = useful.PrintHeader(header, screen, 0, 0) 
+    screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
+    screen = useful.PrintText(">> ", screen, 6, 0)
+
 def PlayGame(GAME, screen):
     header = GAME.name
     while True:
@@ -90,10 +96,234 @@ def PlayGame(GAME, screen):
         screen = useful.PrintText(">> ", screen, 6, 0)   
         
         command = useful.GetInput(screen, 6, 3)
+        defaultPrompt(header, screen)
+        command = command.lower()
 
         if command == "quit":
             break
 
+        # clean up --> remove "the", "a", "an"
+        command_list = clean(command)
+
+        # case <verb>
+        if len(command_list) == 1: 
+            
+            # boolean type to indicate whether the action is successfully executed
+            result = handleActionFormat1(GAME, screen, command_list)
+            response(GAME, screen, command_list, result)
+
+        # case <verb> <item>
+        elif len(command_list) == 2:
+            
+            # boolean type to indicate whether the action is successfully executed
+            result = handleActionFormat2(GAME, screen, command_list)
+            response(GAME, screen, command_list, result)
+
+        # case <verb> <preposition> <item>
+        elif len(command_list) == 3:
+            # do something
+            print("NOT IMPLEMENTED")
+
+        # case <verb> <item> <preposition> <item>
+        elif len(command_list) == 4:
+            # do something
+            print("NOT IMPLEMENTED")
+        
+        # cannot find the action format
+        else:
+            screen = useful.PrintText("Sorry, I'm not quit sure what do you mean by \"" + command + "\"", screen, 8, 0)
+
+def clean(command):
+
+    command_list = command.split(" ")
+
+    while True:
+
+        #remove "the"
+        if "the" in command_list:
+            command_list.remove("the")
+
+        # remove "a"
+        elif "a" in command_list:
+            command_list.remove("a")
+
+        # remove "an"
+        elif "an" in command_list:
+            command_list.remove("an")
+
+        else:
+            break
+
+    return command_list
+
+def response(GAME, screen, command_list, result):
+
+    if result == False:
+        response = "Sorry, " + "\""
+        for i in command_list:
+            response += i
+        response += "\"" + " is not defined."
+
+        screen = useful.PrintText(response, screen, 10, 0)
+
+    elif result == True:
+        response = "OK then, what's next?"
+        screen = useful.PrintText(response, screen, 10, 0)
+
+# handle the case <verb>
+def handleActionFormat1(GAME, screen, command_list):
+
+    verb = command_list[0]
+
+    # if it's not a verb but it's inventory
+    inventory = ""
+    if verb == "inventory":
+        indecies = actionsquirrel.Inventory(GAME)
+        for i in indecies:
+            inventory += GAME.items[i].name + ", "
+        screen = useful.PrintText(inventory, screen, 8, 0)
+        return True
+    
+    elif verb == "look":
+        screen = useful.PrintText(actionsquirrel.Look(GAME.player.current_room, GAME)[0], screen, 8,0)
+        itemlist = "items: "
+        for j in actionsquirrel.Look(GAME.player.current_room, GAME)[1]:
+            itemlist += GAME.items[j].name + ", "
+        screen = useful.PrintText(itemlist, screen, 9,0)
+        return None
+
+    elif verb == "help":
+        screen = useful.PrintText(actionsquirrel.ShowHelp(GAME), screen, 8,0)
+        return True
+
+    elif verb == "save":
+        screen = useful.PrintText(actionsquirrel.SaveGame(GAME), screen, 8, 0)
+        return True
+
+    elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
+        screen = useful.PrintText("Sorry you need to add an item to " + verb, screen, 8,0)
+        return None
+
+    elif verb == "move" or verb == "go":
+        screen = useful.PrintText("Sorry, you need to add a direction", screen, 8, 0)
+        return None
+
+    elif verb == "combine":
+        screen = useful.PrintText("Sorry you need to add two items", screen, 8,0)
+        return None
+
+    # else statement would not be executed if the for loop has been "break"
+    # --> we cannot find the verb in default actions
+    # --> let's search the customActions
+    else:
+        for action in GAME.customActions:
+            if action.verb == verb:
+                # then we execute the action
+                screen = useful.PrintText(action.execute(), screen, 8,0)
+                return True
+
+        # we cannot find the action
+        return False
+
+# handle the case <verb> <item> or <verb> <direction>
+def handleActionFormat2(GAME, screen, command_list):
+
+    DIRECTION_DICT = {"NORTH": ["north","n"], "NORTHEAST":
+                    ["northeast", "ne"], "EAST": ["east","e"], "SOUTHEAST":
+                    ["southeast","se"], "SOUTH": ["south","s"], "SOUTHWEST":
+                    ["southwest","sw"], "WEST": ["west","w"], "NORTHWEST":
+                    ["northwest","nw"], "UP": ["up"], "DOWN": ["down"],
+                    "IN": ["in"], "OUT": ["out"]
+            }
+    KEYS = DIRECTION_DICT.keys()
+
+    verb = command_list[0]
+    item = command_list[1]
+
+    if verb == "pick":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                if actionsquirrel.Pick(index, GAME) == True:
+                    screen = useful.PrintText(str(item) + " was added to inventory", screen, 9,0)
+                    return True
+                else:
+                    screen = useful.PrintText(str(item)+ " is not pickable", screen, 9, 0)
+                    return None
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return None
+
+    elif verb == "drop":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                if actionsquirrel.Drop(index, GAME) == True:
+                    screen = useful.PrintText(str(item)+ " was dropped", screen, 9, 0)
+                    return True
+                else:
+                    screen = useful.PrintText(str(item)+ " is not dropable", screen, 9, 0)
+                    return None
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return None
+
+    elif verb == "examine":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                description = actionsquirrel.Examine(index, GAME)
+                screen = useful.PrintText(description, screen, 9, 0)
+                return True
+
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return None
+
+    elif verb == "move":
+        direction = item
+        for k in KEYS:
+            if direction in DIRECTION_DICT[k]:
+                if actionsquirrel.Move(GAME, k) == False:
+                    screen = useful.PrintText("Sorry cannot move " + item, screen, 9, 0)
+                    return None
+                elif actionsquirrel.Move(GAME, k) == True:
+                    screen = useful.PrintText("Successfully move to " + item, screen, 9, 0)
+                    return None
+        else:
+            screen = useful.PrintText("Sorry no such direction.", screen, 9, 0)
+            return None
+        
+    elif verb == "combine":
+        screen = useful.PrintText("Sorry you need an additional item to combine", screen, 9, 0)
+        return None
+
+    elif verb == "look":
+        screen = useful.PrintText("Sorry you can only use 'look' by itself", screen, 9, 0)
+        return None
+
+    elif verb == "help":
+        screen = useful.PrintText("Please just type 'help'", screen, 8,0)
+        return None
+
+    elif verb == "save":
+        screen = useful.PrintText("Please just type 'save'", screen, 8, 0)
+        return None
+
+    # --> we cannot find the verb in default actions
+    # --> let's search the customActions
+    else:
+        for action in GAME.customActions:
+            if action.verb == verb:
+                # then we execute the action
+                action.execute()
+                return True
+
+        # we cannot find the action
+        return False
+
+def handleActionFormat3(GAME, screen, command_list):
+    print("NOT IMPLEMENTED")
+
+def handleActionFormat4(GAME, screen, command_list):
+    print("NOT IMPLEMENTED")
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
