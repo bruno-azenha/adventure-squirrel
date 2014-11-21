@@ -257,6 +257,11 @@ def handleActionFormat2(GAME, screen, command_list):
         # we cannot find the action
         return False
 
+def handleActionFormat3(GAME, screen, command_list):
+    print("NOT IMPLEMENTED")
+
+def handleActionFormat4(GAME, screen, command_list):
+    print("NOT IMPLEMENTED")
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
