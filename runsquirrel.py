@@ -176,13 +176,25 @@ def handleActionFormat1(GAME, screen, command_list):
             inventory += GAME.items[i].name + ", "
         screen = useful.PrintText(inventory, screen, 8, 0)
         return True
-
-    for def_act in actionsquirrel.DEFAULT_ACTIONS:
-
-        if verb == def_act:
-            screen = useful.PrintText("Where(What) do you want to " + verb + "?", screen, 8, 0)
-            return None
-            break
+    
+    if verb is "look":
+        screen = useful.PrintText(actionsquirrel.Look(GAME.player.current_room, GAME), screen, 8,0)
+        return True
+    if verb is "help":
+        screen = useful.PrintText(actionsquirrel.ShowHelp(GAME), screen, 8,0)
+        return True
+    if verb is "save":
+        screen = useful.PrintText(actionsquirrel.SaveGame(GAME), screen, 8, 0)
+        return True
+    if verb is "pick" or "take" or "examine" or "drop":
+        screen = useful.PrintText("Sorry you need to add an item to" + verb, screen, 8,0)
+        return False
+    if verb is "move" or "go":
+        screen = useful.PrintText("Sorry, you need to add a direction", screen, 8, 0)
+        return False
+    if verb is "combine":
+        screen = useful.PrintText("Sorry you need to add two items", screen, 8,0)
+        return False
 
     # else statement would not be executed if the for loop has been "break"
     # --> we cannot find the verb in default actions
@@ -191,58 +203,85 @@ def handleActionFormat1(GAME, screen, command_list):
         for action in GAME.customActions:
             if action.verb == verb:
                 # then we execute the action
-                action.execute()
+                screen = useful.PrintText(action.execute(), screen, 8,0)
                 return True
 
         # we cannot find the action
         return False
 
-# handle the case <verb> <item>
+# handle the case <verb> <item> or <verb> <direction>
 def handleActionFormat2(GAME, screen, command_list):
+
+    DIRECTION_DICT = {"NORTH": ["north","n"], "NORTHEAST":
+                    ["northeast", "ne"], "EAST": ["east","e"], "SOUTHEAST":
+                    ["southeast","se"], "SOUTH": ["south","s"], "SOUTHWEST":
+                    ["southwest","sw"], "WEST": ["west","w"], "NORTHWEST":
+                    ["northwest","nw"], "UP": ["up"], "DOWN": ["down"],
+                    "IN": ["in"], "OUT": ["out"]
+            }
+    KEYS = DIRECTION_DICT.keys()
 
     verb = command_list[0]
     item = command_list[1]
 
-    for def_act in actionsquirrel.DEFAULT_ACTIONS:
-
-        if verb == def_act and verb == "pick":
-            for index in range(len(GAME.items)):
-                if GAME.items[index].name == item:
-                    if actionsquirrel.Pick(index, GAME) == True:
-                        return True
-                    else:
-                        screen = useful.PrintText(str(item)+" is not pickable", screen, 9, 0)
-                        return None
-            else:
-                screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
-                return None
-
-        elif verb == def_act and verb == "drop":
-            for index in range(len(GAME.items)):
-                if GAME.items[index].name == item:
-                    if actionsquirrel.Drop(index, GAME) == True:
-                        return True
-                    else:
-                        screen = useful.PrintText(str(item)+" is not dropable", screen, 9, 0)
-                        return None
-            else:
-                screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
-                return None
-
-        elif verb == def_act and verb == "examine":
-            for index in range(len(GAME.items)):
-                if GAME.items[index].name == item:
-                    description = actionsquirrel.Examine(index, GAME)
-                    screen = useful.PrintText(description, screen, 9, 0)
+    if verb == "pick":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                if actionsquirrel.Pick(index, GAME) == True:
+                    screen = useful.PrintText(str(item) + "was added to inventory", screen, 9,0)
                     return True
+                else:
+                    screen = useful.PrintText(str(item)+" is not pickable", screen, 9, 0)
+                    return False
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return False
 
-            else:
-                screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
-                return None
+    elif verb == "drop":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                if actionsquirrel.Drop(index, GAME) == True:
+                    screen = useful.PrintText(str(item)+" was dropped", screen, 9, 0)
+                    return True
+                else:
+                    screen = useful.PrintText(str(item)+" is not dropable", screen, 9, 0)
+                    return False
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return False
 
-        # ---------other default actions-----------
-        # NOT YET IMPLEMENTED
-        # ---------other default actions-----------
+    elif verb == "examine":
+        for index in range(len(GAME.items)):
+            if GAME.items[index].name == item:
+                description = actionsquirrel.Examine(index, GAME)
+                screen = useful.PrintText(description, screen, 9, 0)
+                return True
+
+        else:
+            screen = useful.PrintText(str(item)+ " does not exist", screen, 9, 0)
+            return False
+    elif verb == "move":
+        direction = item
+        for k in keys:
+            if direction in DIRECTION_DICT.get(k):
+                if actionsquirrel.Move(GAME, k) is False:
+                    screen = useful.PrintText("Sorry cannot move " + item, screen, 9, 0)
+                    return False
+        else:
+            screen = useful.PrintText("Sorry no such direction.", screen, 9, 0)
+            return False
+        
+    elif verb == "combine":
+        screen = useful.PrintText("Sorry you need an additional item to combine", screen, 9, 0)
+        return False
+    elif verb == "look":
+        screen = useful.PrintText("Sorry you can only use 'look' by itself", screen, 9, 0)
+        return False
+    if verb is "help":
+        screen = useful.PrintText("Please just type 'help'", screen, 8,0)
+        return False
+    if verb is "save":
+        screen = useful.PrintText("Please just type 'save'", screen, 8, 0)
 
     # else statement would not be executed if the for loop has been "break"
     # --> we cannot find the verb in default actions

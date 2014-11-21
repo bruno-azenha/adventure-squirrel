@@ -1,7 +1,7 @@
 import useful
 
 DEFAULT_ACTIONS = ["pick", "drop", "examine", "look" , "move", 
-                "show help", "save game", "load game", "combine items"]
+                "help", "save", "combine"]
 
 #
 # Stories the information of each action and the 
@@ -26,8 +26,9 @@ class CustomAction:
         index = 0
         r = []
         for fun in self.listOfFunctions:
-            # This shouldn't run yet 
-            r.append(fun(*listOfArguments[index]))
+            result = fun(*listOfArguments[index])
+            if result is not True or result is not False:
+                r.append(result)
             index += 1    
         return r
 
@@ -62,7 +63,7 @@ def Examine(itemIndex, game):
     return game.items[itemIndex].description
 
 # Returns the room's description and room's itemIndex
-def look(roomIndex, game):
+def Look(roomIndex, game):
 
     return (game.rooms[roomIndex].description, game.rooms[roomIndex].items)
 
@@ -195,7 +196,7 @@ def RemoveItemFromInventory(game, item):
 # Drop item
 def DropItem(game, itemIndex):
     del game.items[itemIndex]
-    # update all the items index in room, inventory
+    return True
 
 # Drop all items
 def DropAll(game):
