@@ -123,10 +123,10 @@ def score(game):
 
 # Save current state of the game
 # Returns True if succes, False otherwise
-def SaveGame(game,screen):
+def SaveGame(game,filename):
     # Implement save game
 
-    useful.SaveGameWhilePlaying(game,screen)
+    useful.SaveGameWhilePlaying(game,filename)
     return True
 
 # Load a previous state of the game
