@@ -118,3 +118,7 @@ class GameSquirrel():
                         self.rooms[j].items[k] -= 1
             del self.items[itemIndex]
 
+    # Defines the initial position of the player
+    def DefinePlayerStart(self, roomIndex):
+        self.player.current_room = roomIndex
+

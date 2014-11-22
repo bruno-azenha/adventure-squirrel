@@ -18,8 +18,12 @@ import actionsquirrel
 MENU_TOP = ["CREATE a new game", "EDIT a saved game", 
             "EXIT this program"]
 
-MENU_WRITE_GAME = ["GAME", "ROOMS", "ITEMS", "ACTIONS", "SAVE STORY FILE", 
+MENU_WRITE_GAME = ["GAME", "ROOMS", "ITEMS", "PLAYER", "ACTIONS", "SAVE STORY FILE", 
                   "SAVE AND EXIT", "EXIT WITHOUT SAVING"]
+
+MENU_PLAYER = ["DEFINE Starting Room", "DEFINE Starting Inventory", "BACK"]
+
+MENU_PLAYER_INV = ["ADD Item", "REMOVE Item", "BACK"]
 
 MENU_EDIT_GAME = ["CHANGE NAME", "WRITE HELP", "WRITE CREDITS", "BACK"]
 
@@ -145,27 +149,32 @@ def WriteGame(GAME, screen):
         if selection[0] == MENU_WRITE_GAME[2]:
             WriteItems(GAME, screen)
         # END ITEMS #
+
+        # PLAYER #
+        if selection[0] == MENU_WRITE_GAME[3]:
+            WritePlayer(GAME, screen)
+        # END PLAYER #
         
         # ACTIONS #
-        if selection[0] == MENU_WRITE_GAME[3]:
+        if selection[0] == MENU_WRITE_GAME[4]:
             WriteActions(GAME, screen)
         # END ACTIONS # 
         
         # SAVE STORY FILE #
-        if selection[0] == MENU_WRITE_GAME[4]:
+        if selection[0] == MENU_WRITE_GAME[5]:
             useful.SaveStory(GAME, screen)
             time.sleep(2)
         # END SAVE STORY FILE #
 
         # SAVE AND EXIT #
-        if selection[0] == MENU_WRITE_GAME[5]:
+        if selection[0] == MENU_WRITE_GAME[6]:
             useful.SaveStory(GAME, screen)
             time.sleep(2)
             break
         # END SAVE AND EXIT #
 
         # EXIT WITHOUT SAVING #
-        if selection[0] == MENU_WRITE_GAME[6]:
+        if selection[0] == MENU_WRITE_GAME[7]:
             break
         # END EXIT WITHOUT SAVING #
 
@@ -284,7 +293,7 @@ def EditRoom(GAME, screen):
                 screen = useful.PrintText(description, screen, currentLine + 5, 0)
 
                 # Print items in the room
-                screen = useful.PrintText("Items:", screen, currentLine + 7, 0)
+                screen = useful.PrintText("Items in this room:", screen, currentLine + 7, 0)
                 itemNameList = []
                 currentLine = 8
                 for itemIndex in room.items:
@@ -541,11 +550,11 @@ def AddItem(GAME, screen, fromRoomFlag):
         
         RoomMenu = [(r.name) for r in GAME.rooms]
         RoomMenu.append("Player Inventory")
-        RoomMenu.append("None")
+        RoomMenu.append("NOWHERE")
         roomselected = useful.ShowMenu(RoomMenu, screen, 6, 0)
 
         # if it belongs to no room, we simply append it to the item list
-        if roomselected[0] == "None":
+        if roomselected[0] == "NOWHERE":
             GAME.AddItem(newItem)
 
         elif roomselected[0] == "Player Inventory":
@@ -709,7 +718,114 @@ def RemoveItem(GAME, screen):
             if useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
                 
                 GAME.RemoveItem(selection[1])
+
+def WritePlayer(GAME, screen):
+    while True:
+        screen.clear()
+
+        # PLAYER MENU #
+        header = GAME.name
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText("What do you want to do?", screen, 4, 0)
+        selection = useful.ShowMenu(MENU_PLAYER, screen, 6, 0)
+        # END PLAYER MENU #
+
+        # DEFINE Starting Room #
+        if selection[0] == MENU_PLAYER[0]:
+            DefineStartRoom(GAME, screen)
+        # END DEFINE Starting Room #
+
+        # DEFINE Starting Inventory #
+        elif selection[0] == MENU_PLAYER[1]:
+            DefineStartInventory(GAME, screen)
+        # END DEFINE Starting Inventory #
+ 
+        # BACK #
+        else: # selection[0] == "BACK":
+            break
+
+def DefineStartRoom(GAME, screen):
+    screen.clear()
+
+    # STARTING ROOM CHOICE MENU#
+    header = GAME.name
+    screen = useful.PrintHeader(header, screen, 0, 0)
+    question = "What do you want to be the room the player starts in?";
+    screen = useful.PrintText(question, screen, 4, 0)
     
+    roomMenu = [(r.name) for r in GAME.rooms]
+    roomMenu.append("BACK")
+
+    roomselected = useful.ShowMenu(roomMenu, screen, 6, 0)
+    # END STARTING ROOM CHOICE MENU #
+
+    if roomselected[0] != "BACK":
+        GAME.DefinePlayerStart(roomselected[1])
+        
+def DefineStartInventory(GAME, screen):
+    while True:
+        screen.clear()
+        header = "Starting Inventory"
+        question = "What do you want to do?" 
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText(question, screen, 4, 0)
+
+        currentLine = 10
+        # Print items in the inventory
+        screen = useful.PrintText("Items:", screen, currentLine, 0)
+        currentLine += 1
+        itemNameList = []
+        for itemIndex in GAME.player.inventory:
+            itemNameList.append(GAME.items[itemIndex].name)
+            screen = useful.PrintText(GAME.items[itemIndex].name, screen, currentLine, 0)
+            currentLine += 1
+
+        currentLine += 1 
+
+        selection = useful.ShowMenu(MENU_PLAYER_INV, screen, 6, 0)
+        # ADD ITEM #
+        if selection[0] == MENU_PLAYER_INV[0]:
+            screen.clear()
+            question = "Which item should be added to the player's starting inventory?"
+            
+            itemsIndexes = GAME.GetNotPlacedItems()
+            itemsMenu = []
+            for i in itemsIndexes:
+                itemsMenu.append(GAME.items[i].name)
+            itemsMenu.append("BACK")
+            
+            screen = useful.PrintHeader(header, screen, 0, 0)
+            screen = useful.PrintText(question, screen, 4, 0)
+            itemselected = useful.ShowMenu(itemsMenu, screen, 6, 0)
+
+            if itemselected[0] != "BACK":
+                GAME.PlaceItem(itemsIndexes[itemselected[1]], -2)
+
+        # REMOVE ITEM
+        if selection[0] == MENU_PLAYER_INV[1]:
+            screen.clear()
+            question = "Which item should be removed from the player's starting inventory?"
+            
+            itemsIndexes = []
+            itemsMenu = []
+            index = 0
+            for i in GAME.player.inventory:
+                itemsMenu.append(GAME.items[i].name)
+                itemsIndexes.append(GAME.player.inventory[index])
+                index += 1
+            itemsMenu.append("BACK")
+            
+            screen = useful.PrintHeader(header, screen, 0, 0)
+            screen = useful.PrintText(question, screen, 4, 0)
+            itemselected = useful.ShowMenu(itemsMenu, screen, 6, 0)
+
+            if itemselected[0] != "BACK":
+                GAME.UnplaceItem(itemsIndexes[itemselected[1]], -2)
+    
+        # BACK #
+        if selection[0] == "BACK":
+            break
+
 def WriteActions(GAME, screen):
     while True:
         screen.clear()
