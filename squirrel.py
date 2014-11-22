@@ -926,6 +926,7 @@ def AddCustomAction(GAME, screen):
 
     customAction = actionsquirrel.CustomAction(verb, roomBound, itemBound, 
                                                listFuns, listArgs, )
+    GAME.customActions.append(customAction)
 
 def ChooseBehaviors(GAME, screen, verb):
     

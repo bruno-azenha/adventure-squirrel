@@ -1,5 +1,6 @@
 import curses
 import time
+import pdb
 
 import sys
 import useful
@@ -227,7 +228,7 @@ def handleActionFormat1(GAME, screen, command_list):
         for action in GAME.customActions:
             if action.verb == verb:
                 # then we execute the action
-                screen = useful.PrintText(action.execute(), screen, 8,0)
+                action.execute(GAME.player.current_room, GAME.player.inventory)
                 return True
 
         # we cannot find the action
@@ -276,7 +277,7 @@ def handleActionFormat2(GAME, screen, command_list):
 
     elif verb == "examine":
         for index in range(len(GAME.items)):
-            if GAME.items[index].name.lower() == item:
+            if GAME.items[index].name.lower() == item.lower():
                 description = actionsquirrel.Examine(index, GAME)
                 screen = useful.PrintText(description, screen, 9, 0)
                 return True

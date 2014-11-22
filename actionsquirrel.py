@@ -99,7 +99,7 @@ def Move(game, direction):
     target_index = DIRS.index(direction)
 
     # we can go this way
-    if connections[target_index] > 0:
+    if connections[target_index] >= 0:
         game.player.current_room = connections[target_index]
         return True
     # we cannot go this way
