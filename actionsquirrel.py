@@ -93,13 +93,14 @@ def Move(game, direction):
     # get the connection of the current room
     connections = current_room.connections
 
-    DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST"
+    DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
              "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT"]
 
     target_index = DIRS.index(direction)
 
     # we can go this way
     if connections[target_index] > 0:
+        game.player.current_room = connections[target_index]
         return True
     # we cannot go this way
     else:
@@ -118,14 +119,18 @@ def ShowHelp(game):
     
     return game.instructions
 
+# Return the score
+def score(game):
+    return game.player.score
+
 # Save current state of the game
 # Returns True if succes, False otherwise
 def SaveGame(game):
     # Implement save game
     #print("NOT IMPLEMENTED")
 
-    game.saveStory()
-    return True
+    #game.saveStory()
+    return False
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise

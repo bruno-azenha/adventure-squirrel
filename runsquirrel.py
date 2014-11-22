@@ -99,10 +99,10 @@ def PlayGame(GAME, screen):
         defaultPrompt(header, screen)
         command = command.lower()
 
-        if command == "quit":
+        if command == "quit" or command == "exit" :
             break
 
-        # clean up --> remove "the", "a", "an"
+        # clean up --> remove "the", "a", "an", "show"
         command_list = clean(command)
 
         # case <verb>
@@ -121,8 +121,10 @@ def PlayGame(GAME, screen):
 
         # case <verb> <preposition> <item>
         elif len(command_list) == 3:
-            # do something
-            print("NOT IMPLEMENTED")
+            
+            # boolean type to indicate whether the action is successfully executed
+            result = handleActionFormat3(GAME, screen, command_list)
+            response(GAME, screen, command_list, result)
 
         # case <verb> <item> <preposition> <item>
         elif len(command_list) == 4:
@@ -151,6 +153,8 @@ def clean(command):
         elif "an" in command_list:
             command_list.remove("an")
 
+        elif "show" in command_list:
+            command_list.remove("show")
         else:
             break
 
@@ -192,13 +196,17 @@ def handleActionFormat1(GAME, screen, command_list):
         screen = useful.PrintText(itemlist, screen, 9,0)
         return None
 
+    elif verb == "score":
+        screen = useful.PrintText("Your score is: " + str(actionsquirrel.score(GAME)), screen, 8,0)
+        return None
+
     elif verb == "help":
         screen = useful.PrintText(actionsquirrel.ShowHelp(GAME), screen, 8,0)
         return True
 
     elif verb == "save":
-        screen = useful.PrintText(actionsquirrel.SaveGame(GAME), screen, 8, 0)
-        return True
+        screen = useful.PrintText("Saving is not supported", screen, 8, 0)
+        return None
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
         screen = useful.PrintText("Sorry you need to add an item to " + verb, screen, 8,0)
@@ -281,11 +289,12 @@ def handleActionFormat2(GAME, screen, command_list):
         direction = item
         for k in KEYS:
             if direction in DIRECTION_DICT[k]:
-                if actionsquirrel.Move(GAME, k) == False:
-                    screen = useful.PrintText("Sorry cannot move " + item, screen, 9, 0)
+                result = actionsquirrel.Move(GAME, k)
+                if result == False:
+                    screen = useful.PrintText("Sorry cannot move to " + direction, screen, 9, 0)
                     return None
-                elif actionsquirrel.Move(GAME, k) == True:
-                    screen = useful.PrintText("Successfully move to " + item, screen, 9, 0)
+                elif result == True:
+                    screen = useful.PrintText("Successfully move to " + direction, screen, 9, 0)
                     return None
         else:
             screen = useful.PrintText("Sorry no such direction.", screen, 9, 0)
@@ -313,17 +322,44 @@ def handleActionFormat2(GAME, screen, command_list):
         for action in GAME.customActions:
             if action.verb == verb:
                 # then we execute the action
-                action.execute()
+                action.execute(GAME.player.current_room, GAME.player.inventory)
                 return True
 
         # we cannot find the action
         return False
 
+# handle the case <verb> <preposition> <item>
 def handleActionFormat3(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    preposition = command_list[1]
+    item = command_list[2]
 
+    # if it's a default action
+    for act in actionsquirrel.DEFAULT_ACTIONS:
+        if act == verb:
+            screen = useful.PrintText("Please just type \"" + verb + " " + item + "\"", screen, 8, 0)
+            return None
+
+    # if it's not a default action --> it's a custom action
+    for action in GAME.customActions:
+        if action.verb == verb:
+            # then we execute the action
+            action.execute(GAME.player.current_room, GAME.player.inventory)
+            return True
+
+        # we cannot find the action
+        return False
+
+# handle the case <verb> <item> <preposition> <item>
 def handleActionFormat4(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    item1 = command_list[1]
+    preposition = command_list[2]
+    item2 = command_list[3]
+
+
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
