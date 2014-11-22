@@ -142,9 +142,9 @@ def SaveStory(GAME, screen):
 
         print("\nThe game has been saved.")
 
-def SaveGameWhilePlaying(GAME, screen):
+def SaveGameWhilePlaying(GAME,filename):
     filename = GAME.name
-    filename += "_saved.pickle"
+    filename += "_save.pickle"
     with open(filename, 'wb') as f:
         pickle.dump(GAME, f)
     

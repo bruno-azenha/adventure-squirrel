@@ -209,10 +209,8 @@ def handleActionFormat1(GAME, screen, command_list):
         return True
 
     elif verb == "save":
-        if actionsquirrel.SaveGame(GAME, screen) is False:
-            screen = useful.PrintText("did not save", screen, 8, 0)
-        else:
-            screen = useful.PrintText("Game has been saved")
+        actionsquirrel.SaveGame(GAME, sys.argv[1])
+        screen = useful.PrintText("Game has been saved")
         return None
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
