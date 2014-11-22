@@ -12,24 +12,23 @@ class CustomAction:
 
     def __init__(self, verb, roomBound, itemBound, functions, arguments):
         self.verb = verb
-        self.itemBound = False # This is either False or itemIndex
-        self.roomBound = False # This is either False or roomIndex
-        self.listOfItems = []
-        self.listOfFunctions = []
-        self.listOfArguments = []
+        self.itemBound = itemBound # This is either False or itemIndex
+        self.roomBound = roomBound # This is either False or roomIndex
+        self.listOfFunctions = functions
+        self.listOfArguments = arguments
 
     # In order to create the custom actions, we merge together
     # different harcoded smaller actions to result on the desired
     # effect.
-    def execute(self, roomIndex, playerInventory):
+    def execute(self, game):
 
         # First checks if the Bounds are fulfilled
         if self.roomBound != False:
-            if self.roomBound != roomIndex:
+            if self.roomBound != game.player.current_room:
                 return False
 
         if self.itemBound != False:
-            if itemBound not in playerInventory:
+            if itemBound not in game.player.inventory:
                 return False
 
         # Executes each one of the functions in self.listOfFunction
@@ -38,9 +37,8 @@ class CustomAction:
         index = 0
         r = []
         for fun in self.listOfFunctions:
-            result = fun(*listOfArguments[index])
-            if result is not True or result is not False:
-                r.append(result)
+            result = fun(game, *self.listOfArguments[index])
+            r.append(result)
             index += 1    
         return r
 
@@ -215,7 +213,7 @@ def RemoveItemFromInventory(game, item):
 
 # Drop item
 def DropItem(game, itemIndex):
-    del game.items[itemIndex]
+    game.PlaceItem(itemIndex, game.player.current_room)
     return True
 
 # Drop all items
@@ -226,11 +224,13 @@ def DropAll(game):
 
 # Add Item To a Room
 def AddItemToRoom(game, item, room):
-    game.PlaceItem(item, room) 
+    game.PlaceItem(item, room)
+    return True 
     
 # Remove Item From a Room
 def RemoveItemFromRoom(game, item, room):
     game.UnplaceItem(item, room)
+    return True
 
 # Win the Game
 # need to figure out with our game engine

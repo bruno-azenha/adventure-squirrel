@@ -925,7 +925,7 @@ def AddCustomAction(GAME, screen):
     # <verb> <item>        
 
     customAction = actionsquirrel.CustomAction(verb, roomBound, itemBound, 
-                                               listFuns, listArgs, )
+                                               listFuns, listArgs)
     GAME.customActions.append(customAction)
 
 def ChooseBehaviors(GAME, screen, verb):
@@ -979,6 +979,36 @@ def ChooseBehaviors(GAME, screen, verb):
 
     return listOfFunctions, listOfArguments
 
+
+def RemoveCustomAction(GAME, screen):
+    while True:
+        screen.clear()
+
+        # Chose Item to Remove
+        header = GAME.name
+        question = "Which item would you like to remove?"
+        screen = useful.PrintHeader(header, screen, 0, 0)
+        screen = useful.PrintText(question, screen, 4, 0)
+        
+        ItemMenu = [(i.name) for i in GAME.items]
+        ItemMenu.append("BACK")
+        selection = useful.ShowMenu(ItemMenu, screen, 6, 0)
+     
+        if selection[0] == "BACK":
+            break
+
+        else:            
+            screen.clear()
+            
+            header = GAME.name
+            question = "Are you sure you want to REMOVE " + selection[0] + "?"
+            screen = useful.PrintHeader(header, screen, 0, 0)
+            screen = useful.PrintText(question, screen, 4, 0)
+            if useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
+                
+                GAME.RemoveItem(selection[1])
+
+
 def AddBlockRegMove(GAME, screen, verb):
     screen.clear()
     header = verb
@@ -992,7 +1022,7 @@ def AddBlockRegMove(GAME, screen, verb):
 
     if roomselected[0] == "BACK":
         return False, False
-    return actionsquirrel.RegularMove, roomselected[0]
+    return actionsquirrel.RegularMove, [roomselected[1]]
 
 def AddBlockChangeScore(GAME, screen, verb):
     screen.clear()
@@ -1004,7 +1034,7 @@ def AddBlockChangeScore(GAME, screen, verb):
         if useful.IsOnlyDigits(points):
             break
 
-    return actionsquirrel.ChangeScore, int(points)  
+    return actionsquirrel.ChangeScore, [int(points)]  
         
 def AddBlockDisplayText(GAME, screen, verb):
     screen.clear()
@@ -1013,7 +1043,7 @@ def AddBlockDisplayText(GAME, screen, verb):
     
     text = useful.AskWithConfirm(header, question, screen)
 
-    return actionsquirrel.DisplayText, text  
+    return actionsquirrel.DisplayText, [text]  
 
 def AddBlockAddItemToInv(GAME, screen, verb):
     screen.clear()
@@ -1032,7 +1062,7 @@ def AddBlockAddItemToInv(GAME, screen, verb):
 
     if itemselected[0] == "BACK":
         return False, False    
-    return actionsquirrel.AddItemToInventory, item  
+    return actionsquirrel.AddItemToInventory, [item]  
     
 def AddBlockDropItemFromInv(GAME, screen, verb):
     screen.clear()
@@ -1051,7 +1081,7 @@ def AddBlockDropItemFromInv(GAME, screen, verb):
     
     if itemselected[0] == "BACK":
         return False, False    
-    return actionsquirrel.DropItem, item  
+    return actionsquirrel.DropItem, [item]  
 
 def AddBlockRemoveItemFromInv(GAME, screen, verb):
     screen.clear()
@@ -1070,7 +1100,7 @@ def AddBlockRemoveItemFromInv(GAME, screen, verb):
     
     if itemselected[0] == "BACK":
         return False, False    
-    return actionsquirrel.RemoveItemFromInventory, item  
+    return actionsquirrel.RemoveItemFromInventory, [item]  
 
 def AddBlockAddItemToRoom(GAME, screen, verb):
 

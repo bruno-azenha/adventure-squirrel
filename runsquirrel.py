@@ -88,10 +88,13 @@ def defaultPrompt(header, screen):
     screen = useful.PrintHeader(header, screen, 0, 0) 
     screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
     screen = useful.PrintText(">> ", screen, 6, 0)
+    screen.refresh()
 
 def PlayGame(GAME, screen):
     header = GAME.name
     while True:
+        useful.CleanHeader(screen) 
+        header = GAME.rooms[GAME.player.current_room].name
         screen = useful.PrintHeader(header, screen, 0, 0) 
         screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
         screen = useful.PrintText(">> ", screen, 6, 0)   
@@ -228,7 +231,7 @@ def handleActionFormat1(GAME, screen, command_list):
         for action in GAME.customActions:
             if action.verb == verb:
                 # then we execute the action
-                action.execute(GAME.player.current_room, GAME.player.inventory)
+                action.execute(GAME)
                 return True
 
         # we cannot find the action

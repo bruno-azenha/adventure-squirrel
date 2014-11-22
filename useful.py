@@ -224,6 +224,13 @@ def ShowMenu(menu, screen, lin, col):
         if key == 10:
             return (menu[cursor], cursor) 
 
+def CleanHeader(screen):
+    maxes = screen.getmaxyx()
+    for i in range(maxes[1]):
+        screen.addstr(0,i," ")
+        screen.addstr(1,i," ")
+        screen.addstr(2,i," ")
+
 # Function that stays in the loop until the user confirms the input
 def AskWithConfirm(header, question, screen):
     screen.clear()
