@@ -93,13 +93,14 @@ def Move(game, direction):
     # get the connection of the current room
     connections = current_room.connections
 
-    DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST"
+    DIRS = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST",
              "WEST", "NORTHWEST", "UP", "DOWN", "IN", "OUT"]
 
     target_index = DIRS.index(direction)
 
     # we can go this way
     if connections[target_index] > 0:
+        game.player.current_room = connections[target_index]
         return True
     # we cannot go this way
     else:
