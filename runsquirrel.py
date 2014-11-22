@@ -66,7 +66,10 @@ def main(screen):
                 screen = useful.PrintText(question2, screen, 4, 0)
                 screen.refresh()
                 time.sleep(2) 
-            else: 
+            else:
+                screen = useful.PrintText("The game has been loaded", screen, 4, 0)
+                screen.refresh()
+                time.sleep(2)
                 PlayGame(GAME, screen)
                 break
         # END Load Saved Game #                 
