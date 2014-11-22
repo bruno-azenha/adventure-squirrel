@@ -97,7 +97,7 @@ def PlayGame(GAME, screen):
         
         command = useful.GetInput(screen, 6, 3)
         defaultPrompt(header, screen)
-        command = command.lower()
+        #command = command.lower()
 
         if command == "quit" or command == "exit" :
             break
@@ -276,7 +276,7 @@ def handleActionFormat2(GAME, screen, command_list):
 
     elif verb == "examine":
         for index in range(len(GAME.items)):
-            if GAME.items[index].name == item:
+            if GAME.items[index].name.lower() == item:
                 description = actionsquirrel.Examine(index, GAME)
                 screen = useful.PrintText(description, screen, 9, 0)
                 return True
