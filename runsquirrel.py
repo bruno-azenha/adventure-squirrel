@@ -210,7 +210,7 @@ def handleActionFormat1(GAME, screen, command_list):
 
     elif verb == "save":
         actionsquirrel.SaveGame(GAME, sys.argv[1])
-        screen = useful.PrintText("Game has been saved")
+        screen = useful.PrintText("Game has been saved", screen, 8, 0)
         return None
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
