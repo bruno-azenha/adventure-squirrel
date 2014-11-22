@@ -121,8 +121,10 @@ def PlayGame(GAME, screen):
 
         # case <verb> <preposition> <item>
         elif len(command_list) == 3:
-            # do something
-            print("NOT IMPLEMENTED")
+            
+            # boolean type to indicate whether the action is successfully executed
+            result = handleActionFormat3(GAME, screen, command_list)
+            response(GAME, screen, command_list, result)
 
         # case <verb> <item> <preposition> <item>
         elif len(command_list) == 4:
@@ -313,17 +315,44 @@ def handleActionFormat2(GAME, screen, command_list):
         for action in GAME.customActions:
             if action.verb == verb:
                 # then we execute the action
-                action.execute()
+                action.execute(GAME.player.current_room, GAME.player.inventory)
                 return True
 
         # we cannot find the action
         return False
 
+# handle the case <verb> <preposition> <item>
 def handleActionFormat3(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    preposition = command_list[1]
+    item = command_list[2]
 
+    # if it's a default action
+    for act in actionsquirrel.DEFAULT_ACTIONS:
+        if act == verb:
+            screen = useful.PrintText("Please just type \"" + verb + " " + item + "\"", screen, 8, 0)
+            return None
+
+    # if it's not a default action --> it's a custom action
+    for action in GAME.customActions:
+        if action.verb == verb:
+            # then we execute the action
+            action.execute(GAME.player.current_room, GAME.player.inventory)
+            return True
+
+        # we cannot find the action
+        return False
+
+# handle the case <verb> <item> <preposition> <item>
 def handleActionFormat4(GAME, screen, command_list):
-    print("NOT IMPLEMENTED")
+    
+    verb = command_list[0]
+    item1 = command_list[1]
+    preposition = command_list[2]
+    item2 = command_list[3]
+
+
 
 # Wraps the curses changes to the terminal to prevent errors
 curses.wrapper(main)
