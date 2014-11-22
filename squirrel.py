@@ -38,8 +38,7 @@ MENU_ITEMS = ["ADD Item", "EDIT Item", "REMOVE Item", "BACK"]
 MENU_EDIT_ITEM = ["NAME", "DESCRIPTION", "INVENTORY BEHAVIOR",
                   "PLACE ITEM", "BACK"]
 
-MENU_ACTIONS = ["ADD Custom Action", "EDIT Custom Action", 
-                "REMOVE Custom Action", "BACK"]
+MENU_ACTIONS = ["ADD Custom Action", "REMOVE Custom Action", "BACK"]
 
 MENU_ACTION_FORMAT = ["<verb>", 
                       "<verb> <item>",
@@ -843,8 +842,8 @@ def WriteActions(GAME, screen):
         # END ADD CUSTOM ACTION #
 
         # ADD COMBINE ITEM ACTION #
-        if selection[0] == MENU_ACTIONS[1]:
-            AddCombineAction(GAME, screen)
+        # if selection[0] == MENU_ACTIONS[1]:
+        #    AddCombineAction(GAME, screen)
         # END ADD COMBINE ITEM ACTION #
 
         # EDIT CUSTOM ACTION #
@@ -1090,9 +1089,9 @@ def AddBlockRemoveItemFromInv(GAME, screen, verb):
     screen = useful.PrintHeader(header, screen, 0, 0)
     screen = useful.PrintText(question, screen, 4, 0)
     
-    pickableItemsIndexes = GAME.GetPickableItems()
+    pickableItems = GAME.GetPickableItems()
     itemMenu = []
-    for item in pickableItemsIndexes:
+    for item in pickableItems:
         itemMenu.append(GAME.items[item].name)
     itemMenu.append("BACK")
 
@@ -1100,7 +1099,7 @@ def AddBlockRemoveItemFromInv(GAME, screen, verb):
     
     if itemselected[0] == "BACK":
         return False, False    
-    return actionsquirrel.RemoveItemFromInventory, [item]  
+    return actionsquirrel.RemoveItemFromInventory, [pickableItemsIndexes[itemselected[1]]]  
 
 def AddBlockAddItemToRoom(GAME, screen, verb):
 

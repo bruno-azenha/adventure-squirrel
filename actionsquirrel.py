@@ -28,7 +28,7 @@ class CustomAction:
                 return False
 
         if self.itemBound != False:
-            if itemBound not in game.player.inventory:
+            if self.itemBound not in game.player.inventory:
                 return False
 
         # Executes each one of the functions in self.listOfFunction
@@ -203,12 +203,12 @@ def DisplayText(game, text):
 
 # Add Item to player inventory
 def AddItemToInventory(game, item):
-    game.player.inventory.append(item)
+    game.PlaceItem(item, -2)
     return True
 
 # Remove Item from player inventory
 def RemoveItemFromInventory(game, item):
-    game.player.inventory.remove(item)
+    game.UnplaceItem(item, -2)
     return True
 
 # Drop item
@@ -218,8 +218,8 @@ def DropItem(game, itemIndex):
 
 # Drop all items
 def DropAll(game):
-    for i in range(len(game.items)):
-        game.items[i].whereIs = game.player.current_room
+    for i in game.player.inventory:
+        game.PlaceItem(i, game.player.current_room)
     return True
 
 # Add Item To a Room

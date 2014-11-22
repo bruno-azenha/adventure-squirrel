@@ -88,20 +88,17 @@ def defaultPrompt(header, screen):
     screen = useful.PrintHeader(header, screen, 0, 0) 
     screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
     screen = useful.PrintText(">> ", screen, 6, 0)
-    screen.refresh()
+    return screen
 
 def PlayGame(GAME, screen):
     header = GAME.name
     while True:
         useful.CleanHeader(screen) 
         header = GAME.rooms[GAME.player.current_room].name
-        screen = useful.PrintHeader(header, screen, 0, 0) 
-        screen = useful.PrintText("Enter a command below: (or 'quit' to exit)", screen, 4, 0)   
-        screen = useful.PrintText(">> ", screen, 6, 0)   
         
+        screen = defaultPrompt(header, screen)
         command = useful.GetInput(screen, 6, 3)
-        defaultPrompt(header, screen)
-        #command = command.lower()
+        command = command.lower()
 
         if command == "quit" or command == "exit" :
             break
