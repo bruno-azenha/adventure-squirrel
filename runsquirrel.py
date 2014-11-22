@@ -283,11 +283,12 @@ def handleActionFormat2(GAME, screen, command_list):
         direction = item
         for k in KEYS:
             if direction in DIRECTION_DICT[k]:
-                if actionsquirrel.Move(GAME, k) == False:
-                    screen = useful.PrintText("Sorry cannot move " + item, screen, 9, 0)
+                result = actionsquirrel.Move(GAME, k)
+                if result == False:
+                    screen = useful.PrintText("Sorry cannot move to " + direction, screen, 9, 0)
                     return None
-                elif actionsquirrel.Move(GAME, k) == True:
-                    screen = useful.PrintText("Successfully move to " + item, screen, 9, 0)
+                elif result == True:
+                    screen = useful.PrintText("Successfully move to " + direction, screen, 9, 0)
                     return None
         else:
             screen = useful.PrintText("Sorry no such direction.", screen, 9, 0)
