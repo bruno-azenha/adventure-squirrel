@@ -123,12 +123,11 @@ def score(game):
 
 # Save current state of the game
 # Returns True if succes, False otherwise
-def SaveGame(game):
+def SaveGame(game,screen):
     # Implement save game
-    #print("NOT IMPLEMENTED")
 
-    #game.saveStory()
-    return False
+    useful.SaveGameWhilePlaying(game,screen)
+    return True
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise

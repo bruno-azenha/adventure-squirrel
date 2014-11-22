@@ -101,7 +101,7 @@ def PlayGame(GAME, screen):
         
         command = useful.GetInput(screen, 6, 3)
         defaultPrompt(header, screen)
-        #command = command.lower()
+        command = command.lower()
 
         if command == "quit" or command == "exit" :
             break
@@ -209,7 +209,10 @@ def handleActionFormat1(GAME, screen, command_list):
         return True
 
     elif verb == "save":
-        screen = useful.PrintText("Saving is not supported", screen, 8, 0)
+        if actionsquirrel.SaveGame(GAME, screen) is False:
+            screen = useful.PrintText("did not save", screen, 8, 0)
+        else:
+            screen = useful.PrintText("Game has been saved")
         return None
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
