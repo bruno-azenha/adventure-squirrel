@@ -268,7 +268,7 @@ def handleActionFormat2(GAME, screen, command_list):
 
     elif verb == "drop":
         for index in range(len(GAME.items)):
-            if GAME.items[index].name == item:
+            if GAME.items[index].name.lower() == item.lower():
                 if actionsquirrel.Drop(index, GAME) == True:
                     screen = useful.PrintText(str(item)+ " was dropped", screen, 9, 0)
                     return True
