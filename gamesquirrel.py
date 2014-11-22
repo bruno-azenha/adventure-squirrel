@@ -22,6 +22,9 @@ class GameSquirrel():
     def AddCustomAction(self, customAction):
         self.customActions.append(customAction)
 
+    def RemoveCustomAction(self, customAction):
+        del self.customActions[customAction]
+
     def EditConnection(self, fromRoom, toRoom, direction):
         self.rooms[fromRoom].edit_connection(direction, toRoom)
 

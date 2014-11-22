@@ -986,13 +986,13 @@ def RemoveCustomAction(GAME, screen):
 
         # Chose Item to Remove
         header = GAME.name
-        question = "Which item would you like to remove?"
+        question = "Which Custom Action would you like to remove?"
         screen = useful.PrintHeader(header, screen, 0, 0)
         screen = useful.PrintText(question, screen, 4, 0)
         
-        ItemMenu = [(i.name) for i in GAME.items]
-        ItemMenu.append("BACK")
-        selection = useful.ShowMenu(ItemMenu, screen, 6, 0)
+        ActionMenu = [(a.verb) for a in GAME.customActions]
+        ActionMenu.append("BACK")
+        selection = useful.ShowMenu(ActionMenu, screen, 6, 0)
      
         if selection[0] == "BACK":
             break
@@ -1006,7 +1006,7 @@ def RemoveCustomAction(GAME, screen):
             screen = useful.PrintText(question, screen, 4, 0)
             if useful.ShowMenu(MENU_CONFIRM, screen, 6, 0)[0] == "YES":
                 
-                GAME.RemoveItem(selection[1])
+                GAME.RemoveCustomAction(selection[1])
 
 
 def AddBlockRegMove(GAME, screen, verb):
