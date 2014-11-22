@@ -119,14 +119,18 @@ def ShowHelp(game):
     
     return game.instructions
 
+# Return the score
+def score(game):
+    return game.player.score
+
 # Save current state of the game
 # Returns True if succes, False otherwise
 def SaveGame(game):
     # Implement save game
     #print("NOT IMPLEMENTED")
 
-    game.saveStory()
-    return True
+    #game.saveStory()
+    return False
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise

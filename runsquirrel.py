@@ -99,10 +99,10 @@ def PlayGame(GAME, screen):
         defaultPrompt(header, screen)
         command = command.lower()
 
-        if command == "quit":
+        if command == "quit" or command == "exit" :
             break
 
-        # clean up --> remove "the", "a", "an"
+        # clean up --> remove "the", "a", "an", "show"
         command_list = clean(command)
 
         # case <verb>
@@ -153,6 +153,8 @@ def clean(command):
         elif "an" in command_list:
             command_list.remove("an")
 
+        elif "show" in command_list:
+            command_list.remove("show")
         else:
             break
 
@@ -194,13 +196,17 @@ def handleActionFormat1(GAME, screen, command_list):
         screen = useful.PrintText(itemlist, screen, 9,0)
         return None
 
+    elif verb == "score":
+        screen = useful.PrintText("Your score is: " + str(actionsquirrel.score(GAME)), screen, 8,0)
+        return None
+
     elif verb == "help":
         screen = useful.PrintText(actionsquirrel.ShowHelp(GAME), screen, 8,0)
         return True
 
     elif verb == "save":
-        screen = useful.PrintText(actionsquirrel.SaveGame(GAME), screen, 8, 0)
-        return True
+        screen = useful.PrintText("Saving is not supported", screen, 8, 0)
+        return None
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
         screen = useful.PrintText("Sorry you need to add an item to " + verb, screen, 8,0)
