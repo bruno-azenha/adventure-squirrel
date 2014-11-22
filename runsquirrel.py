@@ -255,7 +255,7 @@ def handleActionFormat2(GAME, screen, command_list):
 
     if verb == "pick":
         for index in range(len(GAME.items)):
-            if GAME.items[index].name == item:
+            if GAME.items[index].name.lower() == item.lower():
                 if actionsquirrel.Pick(index, GAME) == True:
                     screen = useful.PrintText(str(item) + " was added to inventory", screen, 9,0)
                     return True
