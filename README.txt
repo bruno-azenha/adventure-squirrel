@@ -37,6 +37,18 @@ simple with the help of Python as a high level language.
 #-------------------------------------------------------------------------#
 
 
+#-----------------------------Caveats-------------------------------------#
+
+1. When creating the game, please make sure that the item name has no white 
+	spaces. i.e. "columbia_university" instead of "columbia university"
+2. When creating the game, please make sure the terminal window size is
+	large enough such as fullsize of the window.
+3. Please do not remove items since it may cause a little problem. If you
+	do want to remove an item, you can place it at -1 (no where) instead.
+
+#-------------------------------------------------------------------------#
+
+
 #--------------------Basic Structure of the Game Engine----------------------#
 
 The game engine contains the following main components:
