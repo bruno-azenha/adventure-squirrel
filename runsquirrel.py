@@ -239,18 +239,8 @@ def handleActionFormat1(GAME, command_list):
     # --> we cannot find the verb in default actions
     # --> let's search the customActions
     else:
-        for action in GAME.customActions:
-            if action.verb == clean_command_line:
-                # then we execute the action
-                returnList = action.execute(GAME)
-                response = ""
-                for item in returnList: 
-                    response += item
-                return True, response
-
-        response = clean_command_line
-        # we cannot find the action
-        return False, response
+        result, response = handleCustomAction(GAME, command_list);
+        return result, response
 
 # handle the case <verb> <item> or <verb> <direction>
 def handleActionFormat2(GAME, command_list):
@@ -267,10 +257,6 @@ def handleActionFormat2(GAME, command_list):
     verb = command_list[0]
     item = command_list[1]
 
-    clean_command_line = ""
-    for word in command_list:
-        clean_command_line += " " + word
-    clean_command_line = clean_command_line[1:]
     
     if verb == "pick":
         for index in range(len(GAME.items)):
@@ -343,20 +329,8 @@ def handleActionFormat2(GAME, command_list):
     # --> we cannot find the verb in default actions
     # --> let's search the customActions
     else:
-        response = ""
-        for action in GAME.customActions:
-            response += action.verb + " | " + clean_command_line + " | "
-            if action.verb == clean_command_line:
-                # then we execute the action
-                returnList = action.execute(GAME)
-                response = ""
-                for item in returnList: 
-                    response += item
-                return True, response
-
-        # we cannot find the action
-        return False, str(len(clean_command_line))
-
+        result, response = handleCustomAction(GAME, command_list);
+        return result, response
 # handle the case <verb> <preposition> <item>
 def handleActionFormat3(GAME, command_list):
     
@@ -376,26 +350,38 @@ def handleActionFormat3(GAME, command_list):
             return None, response
 
     # if it's not a default action --> it's a custom action
-    for action in GAME.customActions:
-        if action.verb == clean_command_line:
-            # then we execute the action
-            returnList = action.execute(GAME)
-            response = ""
-            for item in returnList: 
-                response += item
-            return True, response
+    result, response = handleCustomAction(GAME, command_list)
 
-        # we cannot find the action
-        response = "It failed."
-        return False, response
+    return result, response
 
 # handle the case <verb> <item> <preposition> <item>
-def handleActionFormat4(GAME, screen, command_list):
+def handleActionFormat4(GAME, command_list):
     
     verb = command_list[0]
     item1 = command_list[1]
     preposition = command_list[2]
     item2 = command_list[3]
+
+# hands other cases as custom actions
+def handleCustomAction(GAME, command_list):
+    
+    clean_command_line = ""
+    for word in command_list:
+        clean_command_line += " " + word
+    clean_command_line = clean_command_line[1:]
+    
+    response = ""
+    for action in GAME.customActions:
+        if action.verb.lower() == clean_command_line.lower():
+            # then we execute the action
+            returnList = action.execute(GAME)
+            for item in returnList: 
+                response += item
+            return True, response
+
+    # we cannot find the action
+    response = "Sorry, I didn't understand " + clean_command_line
+    return False, response
 
 
 # Wraps the curses changes to the terminal to prevent errors
