@@ -32,7 +32,7 @@ simple with the help of Python as a high level language.
 
 2. To play the sample game provided by us:
 	
-	$ python3.4 runsquirrel.py columbia
+	$ python3.4 runsquirrel.py columbia_game
 
 #-------------------------------------------------------------------------#
 
