@@ -167,18 +167,6 @@ def clean(command):
 
     return command_list
 
-def checkOK(GAME, command, result):
-
-    if result == False:
-        response  = "\nSorry, I couldn't undestand \""
-        response += command
-        response += "\" is not defined."
-
-    elif result == True:
-        response = "\nOK then, what's next?"
-
-    return response
-
 # handle the case <verb>
 def handleActionFormat1(GAME, command_list):
 
@@ -354,14 +342,6 @@ def handleActionFormat3(GAME, command_list):
     result, response = handleCustomAction(GAME, command_list)
 
     return result, response
-
-# handle the case <verb> <item> <preposition> <item>
-def handleActionFormat4(GAME, command_list):
-    
-    verb = command_list[0]
-    item1 = command_list[1]
-    preposition = command_list[2]
-    item2 = command_list[3]
 
 # hands other cases as custom actions
 def handleCustomAction(GAME, command_list):

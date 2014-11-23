@@ -1,9 +1,3 @@
-#
-# main()
-#
-
-import pdb
-
 import curses
 import time
 
@@ -55,6 +49,7 @@ MENU_BUILDING_BLOCKS = ["Regular Move", "Change Score", "Display Text",
                        "Add Item to Inventory", "Drop Item from Inventory", 
                        "Remove Item from Inventory",  
                        "Add Item to Room", "Remove Item From Room"]
+
 def main(screen):
 
     # Initialize curses
