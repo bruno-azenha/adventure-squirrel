@@ -25,7 +25,8 @@ MENU_PLAYER = ["DEFINE Starting Room", "DEFINE Starting Inventory", "BACK"]
 
 MENU_PLAYER_INV = ["ADD Item", "REMOVE Item", "BACK"]
 
-MENU_EDIT_GAME = ["CHANGE NAME", "WRITE HELP", "WRITE CREDITS", "BACK"]
+MENU_EDIT_GAME = ["CHANGE NAME", "WRITE INTRODUCTION", 
+                  "WRITE HELP", "WRITE CREDITS", "BACK"]
 
 MENU_ROOMS = ["ADD Room", "EDIT Room", "REMOVE Room", "BACK"]
 
@@ -195,20 +196,27 @@ def EditGame(GAME, screen):
             GAME.name = useful.AskWithConfirm(header, question, screen)
         # END CHANGE NAME #
 
-        # WRITE HELP #
+        # WRITE INTRODUCTION #
         if selection[0] == MENU_EDIT_GAME[1]:
+            screen.clear()
+            question = "What is the introductory text for your game?"
+            GAME.introduction = useful.AskWithConfirm(header, question, screen)
+        # END WRITE INTRODUCTION #
+
+        # WRITE HELP #
+        if selection[0] == MENU_EDIT_GAME[2]:
             question = "Write the HELP information."
             GAME.instructions = useful.AskWithConfirm(header, question, screen)
         # END WRITE HELP "
         
         # WRITE CREDITS #
-        if selection[0] == MENU_EDIT_GAME[2]:
+        if selection[0] == MENU_EDIT_GAME[3]:
             question = "Write the CREDITS."
             GAME.credits = useful.AskWithConfirm(header, question, screen)
         # END WRITE CREDITS "
 
         # BACK #
-        if selection[0] == MENU_EDIT_GAME[3]:
+        if selection[0] == "BACK":
             break
         # END BACK #
         

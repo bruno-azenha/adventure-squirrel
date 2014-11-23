@@ -13,6 +13,7 @@ class GameSquirrel():
     def __init__(self):
         self.name = ""
         self.instructions = ""
+        self.introduction = ""
         self.credits = ""
         self.rooms = []
         self.items = []

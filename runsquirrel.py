@@ -1,6 +1,5 @@
 import curses
 import time
-import pdb
 
 import sys
 import useful
@@ -94,8 +93,8 @@ def ShapeScreen(header, body, screen):
     return screen
 
 def PlayGame(GAME, screen):
-    header = GAME.name
-    body = GAME.credits
+    header = GAME.rooms[GAME.player.current_room].name
+    body = GAME.introduction
     
     while True:
         screen.clear()
@@ -130,15 +129,11 @@ def PlayGame(GAME, screen):
             result, response = handleActionFormat3(GAME, command_list)
             #response += checkOK(GAME, command, result)
 
-        # case <verb> <item> <preposition> <item>
-        elif len(command_list) == 4:
-            # do something
-            print("NOT IMPLEMENTED")
-        
-        # cannot find the action format
+        # case <verb> <item> <preposition> <item> and all others
         else:
-            screen = useful.PrintText("Sorry, I'm not quit sure what do you mean by \"" + command + "\"", screen, 8, 0)
-
+            # do something
+            result, response = handleCustomAction(GAME, command_list)
+        
         # Variable Changes for next screen print # 
         header = GAME.rooms[GAME.player.current_room].name
         body = response 
@@ -163,6 +158,10 @@ def clean(command):
 
         elif "show" in command_list:
             command_list.remove("show")
+
+        elif "of" in command_list:
+            command_list.remove("of")
+
         else:
             break
 
@@ -197,14 +196,16 @@ def handleActionFormat1(GAME, command_list):
         for i in indecies:
             inventory += GAME.items[i].name + ", "
         response = inventory
-        return True, response
+        response = response[:-2]
+        return True, "Inventory: " + str(response)
     
     elif verb == "look":
         response = actionsquirrel.Look(GAME.player.current_room, GAME)[0]
-        itemlist = "items: "
+        itemlist = "Items: "
         for j in actionsquirrel.Look(GAME.player.current_room, GAME)[1]:
             itemlist += GAME.items[j].name + ", "
-        response += "\n"+itemlist
+        response += " "+itemlist
+        response = response[:-2]
         return True, response
 
     elif verb == "score":
@@ -212,19 +213,19 @@ def handleActionFormat1(GAME, command_list):
         return True, response
 
     elif verb == "help":
-        response = actionsquirrel.ShowHelp(GAME)
+        response = "Help: " + actionsquirrel.ShowHelp(GAME)
         return True, response
 
     elif verb == "save":
         if actionsquirrel.SaveGame(GAME, sys.argv[1]) is False:
-            response = "did not save"
+            response = "Sorry, I couldn't save"
             return None, response
         else:
-            response = "Game has been saved"
+            response = "Ok! Game was saved!"
             return True, response
 
     elif verb == "pick" or verb == "take" or verb == "examine" or verb == "drop":
-        response = "Sorry you need to add an item to "
+        response = "Sorry, I didn't understand that."
         return None, response
 
     elif verb == "move" or verb == "go":

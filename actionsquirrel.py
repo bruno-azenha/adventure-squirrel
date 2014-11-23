@@ -109,14 +109,11 @@ def Move(game, direction):
 # Returns a list with the items that are in the players inventory 
 def Inventory(game):
     # Implemment inventory retrieval
-    #print("NOT IMPLEMENTED")
-    
     return game.player.inventory
 
 # Returns help text as string
 def ShowHelp(game):
     # Implement help retrieval
-    
     return game.instructions
 
 # Return the score
@@ -127,7 +124,6 @@ def score(game):
 # Returns True if succes, False otherwise
 def SaveGame(game,filename):
     # Implement save game
-
     useful.SaveGameWhilePlaying(game,filename)
     return True
 
@@ -135,7 +131,6 @@ def SaveGame(game,filename):
 # Returns True if succes, False otherwise
 def LoadGame(game):
     # Implement load game
-    #print("NOT IMPLEMENTED")
     game = None
     while True:
 
