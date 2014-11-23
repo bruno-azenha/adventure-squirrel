@@ -216,7 +216,7 @@ def handleActionFormat1(GAME, command_list):
         return True, response
 
     elif verb == "save":
-        if actionsquirrel.SaveGame(GAME, screen) is False:
+        if actionsquirrel.SaveGame(GAME, sys.argv[1]) is False:
             response = "did not save"
             return None, response
         else:
