@@ -356,6 +356,8 @@ def handleCustomAction(GAME, command_list):
         if action.verb.lower() == clean_command_line.lower():
             # then we execute the action
             returnList = action.execute(GAME)
+            if returnList == False:
+                break
             for item in returnList: 
                 response += item
             return True, response
