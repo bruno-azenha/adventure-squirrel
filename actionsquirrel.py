@@ -10,12 +10,13 @@ DEFAULT_ACTIONS = ["pick", "drop", "examine", "look" , "move",
 
 class CustomAction:
 
-    def __init__(self, verb, roomBound, itemBound, functions, arguments):
+    def __init__(self, verb, formatType, roomBound, itemBound, functions, arguments):
         self.verb = verb
         self.itemBound = itemBound # This is either False or itemIndex
         self.roomBound = roomBound # This is either False or roomIndex
         self.listOfFunctions = functions
         self.listOfArguments = arguments
+        self.formatType = formatType
 
     # In order to create the custom actions, we merge together
     # different harcoded smaller actions to result on the desired
@@ -38,7 +39,8 @@ class CustomAction:
         r = []
         for fun in self.listOfFunctions:
             result = fun(game, *self.listOfArguments[index])
-            r.append(result)
+            if result != True and result != False:
+                r.append(result)
             index += 1    
         return r
 
@@ -123,12 +125,11 @@ def score(game):
 
 # Save current state of the game
 # Returns True if succes, False otherwise
-def SaveGame(game):
+def SaveGame(game,screen):
     # Implement save game
-    #print("NOT IMPLEMENTED")
 
-    #game.saveStory()
-    return False
+    useful.SaveGameWhilePlaying(game,screen)
+    return True
 
 # Load a previous state of the game
 # Returns True if succes, False otherwise

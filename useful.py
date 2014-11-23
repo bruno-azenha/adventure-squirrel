@@ -142,6 +142,15 @@ def SaveStory(GAME, screen):
 
         print("\nThe game has been saved.")
 
+def SaveGameWhilePlaying(GAME, screen):
+    filename = GAME.name
+    filename += "_save.pickle"
+    with open(filename, 'wb') as f:
+        pickle.dump(GAME, f)
+    
+    return True
+
+
 # Loads a story file and returns a game or -1 in case of file not found
 def LoadStory(filename):
     try:

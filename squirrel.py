@@ -846,18 +846,13 @@ def WriteActions(GAME, screen):
         #    AddCombineAction(GAME, screen)
         # END ADD COMBINE ITEM ACTION #
 
-        # EDIT CUSTOM ACTION #
-        if selection[0] == MENU_ACTIONS[1]:
-            EditCustomAction(GAME, screen)
-        # END EDIT CUSTOM ACTION "
-        
         # REMOVE CUSTOM ACTION #
-        if selection[0] == MENU_ACTIONS[2]:
+        if selection[0] == MENU_ACTIONS[1]:
             RemoveCustomAction(GAME, screen)
         # END REMOVE CUSTOM ACTION "
 
         # BACK #
-        if selection[0] == MENU_ACTIONS[3]:
+        if selection[0] == "BACK":
             break
         # END BACK #
 
@@ -871,7 +866,8 @@ def AddCustomAction(GAME, screen):
     # Get the verb of the action
     screen.clear()
     header = GAME.name
-    question = "What is the verb associated with this action?"
+    # We should be careful not to use words that will be excluded for uselessness 
+    question = "What is the command line associated with this action?"
     verb = useful.AskWithConfirm(header, question, screen)
 
     # Get the format of the action
@@ -881,6 +877,7 @@ def AddCustomAction(GAME, screen):
     screen = useful.PrintHeader(header, screen, 0, 0)
     screen = useful.PrintText(question, screen, 4, 0)
     selectedformat = useful.ShowMenu(MENU_ACTION_FORMAT, screen, 6, 0)
+    formatType = selectedformat[1]
 
     # To which room is this action bound?
     screen.clear()
@@ -917,14 +914,10 @@ def AddCustomAction(GAME, screen):
     else:
         itemBound = pickableItems[itemselected[1]]
 
-    # <verb>
-    if selectedformat[0] == MENU_ACTION_FORMAT[0]:
-        listFuns, listArgs = ChooseBehaviors(GAME, screen, verb)                
-        
-    # <verb> <item>        
+    # Give the custom action its behavior
+    listFuns, listArgs = ChooseBehaviors(GAME, screen, verb)
 
-    customAction = actionsquirrel.CustomAction(verb, roomBound, itemBound, 
-                                               listFuns, listArgs)
+    customAction = actionsquirrel.CustomAction(verb, formatType, roomBound, itemBound, listFuns, listArgs)
     GAME.customActions.append(customAction)
 
 def ChooseBehaviors(GAME, screen, verb):
@@ -1099,7 +1092,7 @@ def AddBlockRemoveItemFromInv(GAME, screen, verb):
     
     if itemselected[0] == "BACK":
         return False, False    
-    return actionsquirrel.RemoveItemFromInventory, [pickableItemsIndexes[itemselected[1]]]  
+    return actionsquirrel.RemoveItemFromInventory, [pickableItems[itemselected[1]]]  
 
 def AddBlockAddItemToRoom(GAME, screen, verb):
 
